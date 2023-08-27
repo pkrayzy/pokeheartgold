@@ -301,10 +301,10 @@ BOOL ChooseStarterApplication_OvyInit(OVY_MANAGER *ovy, int *state_p) {
     return TRUE;
 }
 
-static const int sSpecies[] = {
-    SPECIES_CHIKORITA,
-    SPECIES_CYNDAQUIL,
-    SPECIES_TOTODILE,
+static const int sSpecies[] = {    
+    SPECIES_BULBASAUR,
+    SPECIES_CHARMANDER,
+    SPECIES_SQUIRTLE,
 };
 
 BOOL ChooseStarterApplication_OvyExec(OVY_MANAGER *ovy, int *state) {
