@@ -40,7 +40,7 @@ BOOL sub_02097F6C(u32 rand, u16 mapno, u16 swarmValue) {
             return TRUE;
         }
     }
-    return FALSE;
+    return TRUE;
 }
 
 void GetSwarmInfoFromRand(u32 rand, u16 *mapno, u16 *species) {
