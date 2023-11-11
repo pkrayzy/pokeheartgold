@@ -1070,6 +1070,10 @@ u8 CheckSortSpeed(BattleSystem *bsys, BattleContext *ctx, int battlerId1, int ba
     if (heldItem1 == HOLD_EFFECT_DITTO_SPEED_UP && ctx->battleMons[battlerId1].species == SPECIES_DITTO) {
         speed1 *= 2;
     }
+
+    if (heldItem1 == HOLD_EFFECT_NO_EVOLVE && ctx->battleMons[battlerId1].species == SPECIES_EEVEE) {
+        speed1 *= 2;
+    }
     
     if (ability1 == ABILITY_QUICK_FEET && ctx->battleMons[battlerId1].status & 0xFF) {
         speed1 = speed1 * 15 / 10;
@@ -5810,10 +5814,14 @@ int CalcMoveDamage(BattleSystem *bsys, BattleContext *ctx, u32 moveNo, u32 sideC
         monSpDef *= 2;
     }
     
-    if (calcAttacker.item == HOLD_EFFECT_PIKA_SPATK_UP && calcAttacker.species == SPECIES_PIKACHU) {
+    if (calcAttacker.item == HOLD_EFFECT_PIKA_SPATK_UP && (calcAttacker.species == SPECIES_PIKACHU || calcAttacker.species == SPECIES_PICHU)) {
         movePower *= 2;
     }
     
+    if (calcAttacker.item == HOLD_EFFECT_NO_EVOLVE && calcAttacker.species == SPECIES_EEVEE) {
+        monAtk *= 2;
+    }
+
     if (calcTarget.item == HOLD_EFFECT_DITTO_DEF_UP && calcTarget.species == SPECIES_DITTO) {
         monDef *= 2;
     }
@@ -6105,9 +6113,21 @@ int ApplyDamageRange(BattleSystem *bsys, BattleContext *ctx, int damage) {
     return damage;
 }
 
+// static const u8 sCritChance[] = {
+//     16, 8, 4, 3, 2
+// };
+
 static const u8 sCritChance[] = {
-    16, 8, 4, 3, 2
+    (512 /= (ctx->battleMons[battlerId].speed)),
+    (512 /= (2 *= (ctx->battleMons[battlerId].speed))),
+    (512 /= (3 *= (ctx->battleMons[battlerId].speed))),
+    (512 /= (4 *= (ctx->battleMons[battlerId].speed))),
+    (512 /= (5 *= (ctx->battleMons[battlerId].speed)))
 };
+
+if (sCritChance > 510) {
+    sCritChance = 510;
+}
 
 u32 TryCriticalHit(BattleSystem *bsys, BattleContext *ctx, int battlerIdAttacker, int battlerIdTarget, int critCnt, u32 sideCondition) {
     u16 critUp;
@@ -6129,7 +6149,8 @@ u32 TryCriticalHit(BattleSystem *bsys, BattleContext *ctx, int battlerIdAttacker
              critCnt +
              (ability == ABILITY_SUPER_LUCK) +
              2*((item == HOLD_EFFECT_CHANSEY_CRITRATE_UP) && (species == SPECIES_CHANSEY)) +
-             2*((item == HOLD_EFFECT_FARFETCHD_CRITRATE_UP) && (species == SPECIES_FARFETCHD));
+             2*((item == HOLD_EFFECT_FARFETCHD_CRITRATE_UP) && (species == SPECIES_FARFETCHD)) +
+             2*((item == HOLD_EFFECT_MONEY_UP) && (species == SPECIES_MEOWTH));
              
     if (critUp > 4) {
         critUp = 4;
