@@ -6118,15 +6118,15 @@ int ApplyDamageRange(BattleSystem *bsys, BattleContext *ctx, int damage) {
 // };
 
 static const u8 sCritChance[] = {
-    (512 /= (ctx->battleMons[battlerId].speed)),
-    (512 /= (2 *= (ctx->battleMons[battlerId].speed))),
-    (512 /= (3 *= (ctx->battleMons[battlerId].speed))),
-    (512 /= (4 *= (ctx->battleMons[battlerId].speed))),
-    (512 /= (5 *= (ctx->battleMons[battlerId].speed)))
+    (512 / (ctx->battleMons[battlerId].speed)),
+    (512 / (2 * (ctx->battleMons[battlerId].speed))),
+    (512 / (3 * (ctx->battleMons[battlerId].speed))),
+    (512 / (4 * (ctx->battleMons[battlerId].speed))),
+    (512 / (5 * (ctx->battleMons[battlerId].speed)))
 };
 
-if (sCritChance > 510) {
-    sCritChance = 510;
+if (sCritChance > (512 / 510)) {
+    sCritChance = (512 / 510);
 }
 
 u32 TryCriticalHit(BattleSystem *bsys, BattleContext *ctx, int battlerIdAttacker, int battlerIdTarget, int critCnt, u32 sideCondition) {
