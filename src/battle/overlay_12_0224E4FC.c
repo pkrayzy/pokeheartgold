@@ -6117,24 +6117,14 @@ int ApplyDamageRange(BattleSystem *bsys, BattleContext *ctx, int damage) {
 //     16, 8, 4, 3, 2
 // };
 
-static const u8 sCritChance[] = {
-    (512 / (ctx->battleMons[battlerId].speed)),
-    (512 / (2 * (ctx->battleMons[battlerId].speed))),
-    (512 / (3 * (ctx->battleMons[battlerId].speed))),
-    (512 / (4 * (ctx->battleMons[battlerId].speed))),
-    (512 / (5 * (ctx->battleMons[battlerId].speed)))
-};
-
-if (sCritChance > (512 / 510)) {
-    sCritChance = (512 / 510);
-}
-
 u32 TryCriticalHit(BattleSystem *bsys, BattleContext *ctx, int battlerIdAttacker, int battlerIdTarget, int critCnt, u32 sideCondition) {
     u16 critUp;
+    u16 CritChance;
     int item;
     u16 species;
     u32 status2;
     u32 moveEffect;
+    u32 speed; // Gen 1 Critical Hit
     int ret = 1;
     int ability;
     
@@ -6142,6 +6132,7 @@ u32 TryCriticalHit(BattleSystem *bsys, BattleContext *ctx, int battlerIdAttacker
     species = ctx->battleMons[battlerIdAttacker].species;
     status2 = ctx->battleMons[battlerIdAttacker].status2;
     moveEffect = ctx->battleMons[battlerIdTarget].moveEffectFlags;
+    speed = ctx->battleMons[battlerIdAttacker].speed;
     ability = ctx->battleMons[battlerIdAttacker].ability;
     
     critUp = (((status2 & STATUS2_FOCUS_ENERGY) != 0)*2) + 
@@ -6156,7 +6147,13 @@ u32 TryCriticalHit(BattleSystem *bsys, BattleContext *ctx, int battlerIdAttacker
         critUp = 4;
     }
     
-    if ((BattleSystem_Random(bsys) % sCritChance[critUp]) == 0) {
+    CritChance = (512 / (critUp * speed));
+
+    if (CritChance < 512/510) {
+        CritChance = 512/510;
+    }
+
+    if ((BattleSystem_Random(bsys) % CritChance) == 0) {
         if (!CheckBattlerAbilityIfNotIgnored(ctx, battlerIdAttacker, battlerIdTarget, ABILITY_BATTLE_ARMOR) && !CheckBattlerAbilityIfNotIgnored(ctx, battlerIdAttacker, battlerIdTarget, ABILITY_SHELL_ARMOR) &&
             !(sideCondition & SIDE_CONDITION_LUCKY_CHANT) && !(moveEffect & MOVE_EFFECT_FLAG_LUCKY_CHANT)) {
             ret = 2;
