@@ -32,6 +32,7 @@
 #include "msgdata/msg/msg_0010.h"
 #include "script.h"
 #include "msgdata/msg.naix"
+#include "overlay_01_021F1AFC.h"
 
 struct ItemUseFuncDat {
     ItemMenuUseFunc menu;
@@ -762,7 +763,7 @@ int UseRegisteredItemButtonInField(FieldSystem *fieldSystem, u8 slot) {
     if (Save_VarsFlags_CheckPalParkSysFlag(Save_VarsFlags_Get(fieldSystem->saveData)) == TRUE) {
         return 0;
     }
-    if (CheckFlag996(Save_VarsFlags_Get(fieldSystem->saveData)) == TRUE) {
+    if (Save_VarsFlags_CheckBugContestFlag(Save_VarsFlags_Get(fieldSystem->saveData)) == TRUE) {
         return 0;
     }
     if (ov01_021F6B10(fieldSystem) != TRUE) {
