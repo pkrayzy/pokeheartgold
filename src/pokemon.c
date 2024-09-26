@@ -19,11 +19,11 @@
 #include "party.h"
 #include "seal_case.h"
 #include "sound_02004A44.h"
+#include "sprite.h"
 #include "trainer_data.h"
 #include "trainer_memo.h"
 #include "unk_0200CF18.h"
 #include "unk_02016EDC.h"
-#include "unk_02023694.h"
 #include "unk_02078834.h"
 
 void MonEncryptSegment(void *data, u32 size, u32 key);
@@ -2708,7 +2708,7 @@ struct UnkImageStruct *sub_02070C24(SpriteRenderer *renderer, SpriteGfxHandler *
     spriteResourcesTemplate.resIdList[GF_GFX_RES_TYPE_ANIM] = resTag + 0x4E27;
     spriteResourcesTemplate.spritePriority                  = _020FF50C[resTag];
     object                                                  = SpriteRenderer_LoadResourcesAndCreateSprite(renderer, gfxHandler, &spriteResourcesTemplate);
-    sub_02024AA8(object->sprite, 0);
+    Sprite_SetPalOffsetRespectVramOffset(object->sprite, 0);
     UnkImageStruct_SetSpritePositionXY(object, x, y);
     UnkImageStruct_TickSpriteAnimation1Frame(object);
     UnkImageStruct_SetSpriteAnimActiveFlag(object, 1);
@@ -4248,7 +4248,7 @@ void sub_02072A98(Pokemon *mon, struct UnkPokemonStruct_02072A98 *dest) {
     PokemonDataBlockB *dbB; // sp4
     PokemonDataBlockC *dbC; // r7
     PokemonDataBlockD *dbD; // ip
-    BoxPokemon *boxMon; // r6
+    BoxPokemon *boxMon;     // r6
     int i;
 
     if (!mon->box.party_lock) {
@@ -4328,7 +4328,7 @@ void sub_02072D64(const struct UnkPokemonStruct_02072A98 *src, Pokemon *mon) {
     PokemonDataBlockB *dbB; // r6
     PokemonDataBlockC *dbC; // r7
     PokemonDataBlockD *dbD; // ip
-    BoxPokemon *boxMon; // sp4
+    BoxPokemon *boxMon;     // sp4
     int i;
 
     MI_CpuClearFast(mon, sizeof(Pokemon));

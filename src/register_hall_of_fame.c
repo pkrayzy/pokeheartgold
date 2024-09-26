@@ -166,22 +166,25 @@ typedef struct RegisterHofMon {
     u16 plttBak[16];
 } RegisterHofMon;
 
-typedef struct RegisterHallOfFameData {
+typedef struct RegisterHallOfFameData RegisterHallOfFameData;
+
+typedef BOOL (*RegisterHallOfFameSubprocCallback)(RegisterHallOfFameData *);
+
+struct RegisterHallOfFameData {
     RegisterHallOfFameArgs *args; // 00000
-    SysTask *vblankTask; // 00004
-    BOOL(*subprocCallback)
-    (struct RegisterHallOfFameData *);
+    SysTask *vblankTask;          // 00004
+    RegisterHallOfFameSubprocCallback subprocCallback;
     u16 subprocTimer;
     u16 subprocStage;
     BgConfig *bgConfig; // 00010
     Window windows[7];
-    MsgData *msgData; // 00084
+    MsgData *msgData;         // 00084
     MessageFormat *msgFormat; // 00088
     String *strbuf1;
     String *strbuf2;
     NARC *narcA101;
     NARC *narcA180;
-    SpriteRenderer *spriteRenderer; // 0009C
+    SpriteRenderer *spriteRenderer;     // 0009C
     SpriteGfxHandler *spriteGfxHandler; // 000A0
     UnkImageStruct *monPics[15];
     Camera *camera;
@@ -192,7 +195,7 @@ typedef struct RegisterHallOfFameData {
     RegisterHofMon mons[PARTY_SIZE];
     u32 numMons;
     RegisterHallOfFameScene currentScene; // 1304C
-    RegisterHallOfFameScene nextScene; // 13050
+    RegisterHallOfFameScene nextScene;    // 13050
     u16 sceneSubstep;
     u16 curMonIndex;
     f32 unk_13058;
@@ -207,7 +210,7 @@ typedef struct RegisterHallOfFameData {
     int fadeDuration;
     u16 generateConfettiDelayLength;
     u16 generateConfettiDelayTimer;
-} RegisterHallOfFameData;
+};
 
 typedef struct RegisterHofSpotlightTaskData {
     GXDLInfo gxDlInfo;
@@ -270,8 +273,6 @@ typedef struct RegisterHofTaskData_IndivMonAnimAndCry {
     u16 isFrontpic;
     BOOL startCry;
 } RegisterHofTaskData_IndivMonAnimAndCry;
-
-typedef BOOL (*RegisterHallOfFameSubprocCallback)(RegisterHallOfFameData *);
 
 static void RegisterHallOfFame_SetGfxBanks(void);
 static void VBlankTask_RegisterHallOfFame_IndividualMonsCongrats(SysTask *task, void *taskData);
@@ -900,7 +901,7 @@ static void VBlankTask_RegisterHallOfFame_IndividualMonsCongrats(SysTask *task, 
         data->subprocCallback = NULL;
     }
     DoScheduledBgGpuUpdates(data->bgConfig);
-    sub_0200D020(data->spriteGfxHandler);
+    SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
     thunk_OamManager_ApplyAndResetBuffers();
     OS_SetIrqCheckFlag(OS_IE_V_BLANK);
 }
@@ -931,12 +932,12 @@ static void RegisterHallOfFame_CreateSpriteGfxHandlers(RegisterHallOfFameData *d
     {
         OamManagerParam sp2C      = ov63_0221FCB8;
         OamCharTransferParam sp18 = ov63_0221FB30;
-        sub_0200CF70(data->spriteRenderer, &sp2C, &sp18, 0x20);
+        SpriteRenderer_CreateOamCharPlttManagers(data->spriteRenderer, &sp2C, &sp18, 0x20);
     }
 
     {
         SpriteResourceCountsListUnion sp00 = sSpriteGfxHandlerCapacities;
-        sub_0200CFF4(data->spriteRenderer, data->spriteGfxHandler, 15);
+        SpriteRenderer_CreateSpriteList(data->spriteRenderer, data->spriteGfxHandler, 15);
         SpriteRenderer_Init2DGfxResManagersFromCountsArray(data->spriteRenderer, data->spriteGfxHandler, &sp00);
     }
     G2dRenderer_SetSubSurfaceCoords(SpriteRenderer_GetG2dRendererPtr(data->spriteRenderer), 0, FX32_CONST(1024));
@@ -2264,7 +2265,7 @@ static void VBlankTask_RegisterHallOfFame_WholePartyCongrats(SysTask *task, void
     }
     RegisterHallOfFame_G3Commit(data);
     DoScheduledBgGpuUpdates(data->bgConfig);
-    sub_0200D020(data->spriteGfxHandler);
+    SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
     thunk_OamManager_ApplyAndResetBuffers();
     OS_SetIrqCheckFlag(OS_IE_V_BLANK);
 }

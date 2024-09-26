@@ -16,13 +16,13 @@
 #include "render_text.h"
 #include "render_window.h"
 #include "sound.h"
+#include "sprite.h"
 #include "system.h"
 #include "touchscreen.h"
 #include "unk_02005D10.h"
 #include "unk_0200CF18.h"
 #include "unk_0200FA24.h"
 #include "unk_020183F0.h"
-#include "unk_02023694.h"
 #include "unk_0203A3B0.h"
 #include "vram_transfer_manager.h"
 
@@ -180,7 +180,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 0,
      .rotation    = 1,
-     .unk_10      = 0,
+     .palIndex    = 0,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -194,7 +194,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 0,
      .rotation    = 1,
-     .unk_10      = 0,
+     .palIndex    = 0,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -208,7 +208,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 1,
      .rotation    = 1,
-     .unk_10      = 0,
+     .palIndex    = 0,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -222,7 +222,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 1,
      .rotation    = 1,
-     .unk_10      = 0,
+     .palIndex    = 0,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -236,7 +236,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 1,
      .rotation    = 1,
-     .unk_10      = 0,
+     .palIndex    = 0,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -250,7 +250,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 0,
      .rotation    = 1,
-     .unk_10      = 0,
+     .palIndex    = 0,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -264,7 +264,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 0,
      .rotation    = 1,
-     .unk_10      = 0,
+     .palIndex    = 0,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -278,7 +278,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 0,
      .rotation    = 1,
-     .unk_10      = 1,
+     .palIndex    = 1,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -292,7 +292,7 @@ static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
      .z           = 0,
      .animSeqNo   = 0,
      .rotation    = 1,
-     .unk_10      = 1,
+     .palIndex    = 1,
      .whichScreen = NNS_G2D_VRAM_TYPE_2DMAIN,
      .unk_18      = 0,
      .unk_1C      = 0,
@@ -348,7 +348,7 @@ BOOL OptionsMenu_Init(OVY_MANAGER *manager, int *state) {
     data->frameNumText        = String_New(40, data->heapId);
 
     TextFlags_SetCanABSpeedUpPrint(FALSE);
-    sub_02002B8C(FALSE);
+    TextFlags_SetCanTouchSpeedUpPrint(FALSE);
 
     sub_0200FBF4(PM_LCD_TOP, 0);
     sub_0200FBF4(PM_LCD_BOTTOM, 0);
@@ -382,7 +382,7 @@ BOOL OptionsMenu_Exit(OVY_MANAGER *manager, int *state) {
     String_Delete(data->frameNumText);
 
     TextFlags_SetCanABSpeedUpPrint(TRUE);
-    sub_02002B8C(TRUE);
+    TextFlags_SetCanTouchSpeedUpPrint(TRUE);
 
     OverlayManager_FreeData(manager);
     DestroyHeap(data->heapId);
@@ -401,24 +401,24 @@ BOOL OptionsMenu_Main(OVY_MANAGER *manager, int *state) {
         data->fadeUnused = 0;
         BeginNormalPaletteFade(0, 1, 1, RGB_BLACK, 6, 1, data->heapId);
         OptionsApp_SetActiveButtonsXPosition(data);
-        sub_0200D020(data->spriteGfxHandler);
+        SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
         break;
     case 1:
-        sub_0200D020(data->spriteGfxHandler);
+        SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
         if (!IsPaletteFadeFinished()) {
             return FALSE;
         }
         break;
     case 2:
         if (data->unk10_0 != 0) {
-            sub_0200D020(data->spriteGfxHandler);
+            SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
             break;
         }
         OptionsApp_HandleInput(data);
-        sub_0200D020(data->spriteGfxHandler);
+        SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
         return FALSE;
     case 3:
-        sub_0200D020(data->spriteGfxHandler);
+        SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
         if (!OptionsApp_ConfirmAndQuitButtonsAreDoneAnimating(data)) {
             data->fadeUnused = 0;
             BeginNormalPaletteFade(0, 0, 0, RGB_BLACK, 6, 1, data->heapId);
@@ -429,7 +429,7 @@ BOOL OptionsMenu_Main(OVY_MANAGER *manager, int *state) {
         if (TextPrinterCheckActive(data->textPrinter)) {
             RemoveTextPrinter(data->textPrinter);
         }
-        sub_0200D020(data->spriteGfxHandler);
+        SpriteGfxHandler_RenderAndAnimateSprites(data->spriteGfxHandler);
         if (!IsPaletteFadeFinished()) {
             return FALSE;
         }
@@ -775,16 +775,19 @@ static void OptionsApp_LoadMenuEntriesData(OptionsApp_Data *data) {
     data->menuEntries[MENU_ENTRY_6].value            = 0;
 }
 
-// https://decomp.me/scratch/wtNBN
-#ifdef NONMATCHING
 static void ov54_021E6418(OptionsApp_Data *data, u16 menuEntryId) {
-    u32 y = menuEntryId * 24 + 5;
-    FillWindowPixelRect(&data->windows.selectedOption, 0, 108 + sOptionsApp_UnkWindowWidthOffsets[menuEntryId], y, 384, 24);
+    u32 selectedColor    = MAKE_TEXT_COLOR(1, 2, 0);
+    u32 notSelectedColor = MAKE_TEXT_COLOR(15, 2, 0);
+    u32 color;
+    u16 i;
+    u8 frameDelay;
+    u16 x = 0;
+    FillWindowPixelRect(&data->windows.selectedOption, 0, 108 + sOptionsApp_UnkWindowWidthOffsets[menuEntryId], menuEntryId * 24 + 5, 384, 24);
 
     switch (menuEntryId) {
     case MENU_ENTRY_FRAME:
-        u16 x = sOptionChoiceLabelXCoords[menuEntryId][0] - FontID_String_GetWidth(0, data->menuEntries[menuEntryId].strings[data->menuEntries[menuEntryId].value], 0) / 2;
-        AddTextPrinterParameterizedWithColor(&data->windows.selectedOption, 0, data->menuEntries[menuEntryId].strings[data->menuEntries[menuEntryId].value], x, y, TEXT_SPEED_NOTRANSFER, MAKE_TEXT_COLOR(1, 2, 0), NULL);
+        x = sOptionChoiceLabelXCoords[menuEntryId][0] - FontID_String_GetWidth(0, data->menuEntries[menuEntryId].strings[data->menuEntries[menuEntryId].value], 0) / 2;
+        AddTextPrinterParameterizedWithColor(&data->windows.selectedOption, 0, data->menuEntries[menuEntryId].strings[data->menuEntries[menuEntryId].value], x, menuEntryId * 24 + 5, TEXT_SPEED_NOTRANSFER, MAKE_TEXT_COLOR(1, 2, 0), NULL);
         CopyWindowToVram(&data->windows.selectedOption);
         OptionsApp_PrintTextFrameString(data, data->frameNumText, TRUE);
         data->unk10_21 = TRUE;
@@ -801,238 +804,32 @@ static void ov54_021E6418(OptionsApp_Data *data, u16 menuEntryId) {
         break;
     }
 
-    // if (data->menuEntries[menuEntryId].numStrings > 0)
-    for (u16 i = 0; i < data->menuEntries[menuEntryId].numStrings; i++) {
-        u32 color = (i == data->menuEntries[menuEntryId].value) ? MAKE_TEXT_COLOR(1, 2, 0) : MAKE_TEXT_COLOR(15, 2, 0);
-        u16 x     = sOptionChoiceLabelXCoords[menuEntryId][i] - (FontID_String_GetWidth(0, data->menuEntries[menuEntryId].strings[i], 0) / 2);
-        AddTextPrinterParameterizedWithColor(&data->windows.selectedOption, 0, data->menuEntries[menuEntryId].strings[i], x, y, TEXT_SPEED_NOTRANSFER, color, NULL);
+    x = 0;
+    for (i = 0; i < data->menuEntries[menuEntryId].numStrings; i++) {
+        if (i == data->menuEntries[menuEntryId].value) {
+            color = selectedColor;
+        } else {
+            color = notSelectedColor;
+        }
+        // required to match a double `bls` above
+        if (i == data->menuEntries[menuEntryId].numStrings - 1) {
+            frameDelay = TEXT_SPEED_NOTRANSFER;
+        } else {
+            frameDelay = TEXT_SPEED_NOTRANSFER;
+        }
+        x = sOptionChoiceLabelXCoords[menuEntryId][i] - (FontID_String_GetWidth(0, data->menuEntries[menuEntryId].strings[i], 0) / 2);
+        AddTextPrinterParameterizedWithColor(&data->windows.selectedOption, 0, data->menuEntries[menuEntryId].strings[i], x, menuEntryId * 24 + 5, frameDelay, color, NULL);
     }
 
     CopyWindowToVram(&data->windows.selectedOption);
 }
-#else
-// clang-format off
-static asm void ov54_021E6418(OptionsApp_Data *data, u16 menuEntryId) {
-    push {r3, r4, r5, r6, r7, lr}
-    sub sp, #0x20
-    add r6, r1, #0
-    str r0, [sp, #0x10]
-    ldr r2, =sOptionsApp_UnkWindowWidthOffsets
-    mov r1, #0x18
-    add r0, r6, #0
-    mul r0, r1
-    add r0, r0, #5
-    str r0, [sp, #0x14]
-    ldrsb r2, [r2, r6]
-    lsl r0, r1, #4
-    str r0, [sp]
-    ldr r3, [sp, #0x14]
-    ldr r0, [sp, #0x10]
-    add r2, #0x6c
-    lsl r2, r2, #0x10
-    lsl r3, r3, #0x10
-    str r1, [sp, #4]
-    add r0, #0x44
-    mov r1, #0
-    lsr r2, r2, #0x10
-    lsr r3, r3, #0x10
-    bl FillWindowPixelRect
-    cmp r6, #5
-    bhi _021E652E
-    add r0, r6, r6
-    add r0, pc
-    ldrh r0, [r0, #6]
-    lsl r0, r0, #0x10
-    asr r0, r0, #0x10
-    add pc, r0
-_021E645A: // jump table
-    DCD 0x00D200AC // _021E6508 - _021E645A - 2 ; case 0
-                   // _021E652E - _021E645A - 2 ; case 1
-    DCD 0x008200D2 // _021E652E - _021E645A - 2 ; case 2
-                   // _021E64DE - _021E645A - 2 ; case 3
-    DCD 0x000A0096 // _021E64F2 - _021E645A - 2 ; case 4
-                   // _021E6466 - _021E645A - 2 ; case 5
-_021E6466:
-    ldr r4, [sp, #0x10]
-    mov r0, #0x54
-    add r7, r6, #0
-    mul r7, r0
-    add r4, #0x86
-    ldr r0, [sp, #0x10]
-    ldrh r1, [r4, r7]
-    add r0, #0x88
-    add r5, r0, r7
-    lsl r1, r1, #2
-    mov r0, #0
-    ldr r1, [r5, r1]
-    add r2, r0, #0
-    bl FontID_String_GetWidth
-    mov r1, #6
-    add r2, r6, #0
-    mul r2, r1
-    ldr r1, =sOptionChoiceLabelXCoords
-    lsr r0, r0, #1
-    ldrh r1, [r1, r2]
-    sub r0, r1, r0
-    lsl r0, r0, #0x10
-    lsr r3, r0, #0x10
-    ldr r0, [sp, #0x14]
-    mov r1, #0
-    str r0, [sp]
-    mov r0, #0xff
-    str r0, [sp, #4]
-    ldr r0, =0x00010200
-    str r0, [sp, #8]
-    str r1, [sp, #0xc]
-    ldrh r2, [r4, r7]
-    ldr r0, [sp, #0x10]
-    lsl r2, r2, #2
-    ldr r2, [r5, r2]
-    add r0, #0x44
-    bl AddTextPrinterParameterizedWithColor
-    ldr r0, [sp, #0x10]
-    add r0, #0x44
-    bl CopyWindowToVram
-    ldr r0, [sp, #0x10]
-    mov r2, #0xc9
-    lsl r2, r2, #2
-    add r1, r0, #0
-    ldr r1, [r1, r2]
-    mov r2, #1
-    bl OptionsApp_PrintTextFrameString
-    ldr r0, [sp, #0x10]
-    ldr r1, [r0, #0x10]
-    mov r0, #2
-    lsl r0, r0, #0x14
-    orr r1, r0
-    ldr r0, [sp, #0x10]
-    add sp, #0x20
-    str r1, [r0, #0x10]
-    pop {r3, r4, r5, r6, r7, pc}
-_021E64DE:
-    mov r0, #0x54
-    add r1, r6, #0
-    mul r1, r0
-    ldr r0, [sp, #0x10]
-    add r0, r0, r1
-    add r0, #0x86
-    ldrh r0, [r0]
-    bl GF_SndSetMonoFlag
-    b _021E652E
-_021E64F2:
-    mov r1, #0x54
-    add r2, r6, #0
-    mul r2, r1
-    ldr r1, [sp, #0x10]
-    mov r0, #0
-    add r1, r1, r2
-    add r1, #0x86
-    ldrh r1, [r1]
-    bl Options_SetButtonModeOnMain
-    b _021E652E
-_021E6508:
-    mov r1, #0x54
-    add r2, r6, #0
-    mul r2, r1
-    ldr r1, [sp, #0x10]
-    ldr r0, [sp, #0x10]
-    add r1, r1, r2
-    add r1, #0x86
-    ldrh r1, [r1]
-    ldr r0, [r0, #0x24]
-    bl Options_SetTextSpeed
-    ldr r0, [sp, #0x10]
-    mov r2, #0xc9
-    lsl r2, r2, #2
-    add r1, r0, #0
-    ldr r1, [r1, r2]
-    mov r2, #0
-    bl OptionsApp_PrintTextFrameString
-_021E652E:
-    mov r0, #0x54
-    add r1, r6, #0
-    mul r1, r0
-    ldr r0, [sp, #0x10]
-    mov r4, #0
-    add r5, r0, r1
-    add r0, r5, #0
-    add r0, #0x84
-    ldrh r0, [r0]
-    cmp r0, #0
-    bls _021E65B2
-    bls _021E65B2
-    mov r0, #6
-    ldr r1, =sOptionChoiceLabelXCoords
-    mul r0, r6
-    add r0, r1, r0
-    str r0, [sp, #0x18]
-    ldr r0, [sp, #0x10]
-    str r0, [sp, #0x1c]
-    add r0, #0x44
-    str r0, [sp, #0x1c]
-_021E6558:
-    add r0, r5, #0
-    add r0, #0x86
-    ldrh r0, [r0]
-    cmp r4, r0
-    bne _021E6566
-    ldr r6, =0x00010200
-    b _021E6568
-_021E6566:
-    ldr r6, =0x000F0200
-_021E6568:
-    lsl r7, r4, #2
-    add r1, r5, r7
-    add r1, #0x88
-    mov r0, #0
-    ldr r1, [r1, #0]
-    add r2, r0, #0
-    bl FontID_String_GetWidth
-    ldr r1, [sp, #0x18]
-    lsl r2, r4, #1
-    ldrh r1, [r1, r2]
-    lsr r0, r0, #1
-    add r2, r5, r7
-    sub r0, r1, r0
-    lsl r0, r0, #0x10
-    lsr r3, r0, #0x10
-    ldr r0, [sp, #0x14]
-    add r2, #0x88
-    str r0, [sp]
-    mov r0, #0xff
-    str r0, [sp, #4]
-    str r6, [sp, #8]
-    mov r0, #0
-    str r0, [sp, #0xc]
-    ldr r0, [sp, #0x1c]
-    ldr r2, [r2, #0]
-    mov r1, #0
-    bl AddTextPrinterParameterizedWithColor
-    add r0, r4, #1
-    lsl r0, r0, #0x10
-    lsr r4, r0, #0x10
-    add r0, r5, #0
-    add r0, #0x84
-    ldrh r0, [r0]
-    cmp r4, r0
-    blo _021E6558
-_021E65B2:
-    ldr r0, [sp, #0x10]
-    add r0, #0x44
-    str r0, [sp, #0x10]
-    bl CopyWindowToVram
-    add sp, #0x20
-    pop {r3, r4, r5, r6, r7, pc}
-}
-// clang-format on
-#endif
 
 static void OptionsApp_UpdateMenuEntryCarousel(OptionsApp_Data *data, u32 menuEntryId, OptionsApp_MenuEntry *menuEntry, s32 offset) {
     if (menuEntryId == MENU_ENTRY_FRAME) {
         if (offset == -1) {
-            Set2dSpriteAnimSeqNo(data->sprites[5], 1);
+            Sprite_SetAnimCtrlSeq(data->sprites[5], 1);
         } else if (offset == 1) {
-            Set2dSpriteAnimSeqNo(data->sprites[6], 1);
+            Sprite_SetAnimCtrlSeq(data->sprites[6], 1);
         }
     }
 
@@ -1083,21 +880,21 @@ static void OptionsApp_HandleKeyInput(OptionsApp_Data *data, OptionsApp_MenuEntr
         if (data->menuEntries[data->currentMenuEntryId].value == 1) {
             sub_02018410(data->unk20, 0);
             PlaySE(SEQ_SE_DP_SAVE);
-            Set2dSpriteAnimSeqNo(data->sprites[8], 3);
+            Sprite_SetAnimCtrlSeq(data->sprites[8], 3);
             data->unk10_0 = 1;
         } else {
             sub_02018410(data->unk20, 0);
             PlaySE(SEQ_SE_GS_GEARCANCEL);
-            Set2dSpriteAnimSeqNo(data->sprites[7], 3);
+            Sprite_SetAnimCtrlSeq(data->sprites[7], 3);
             data->unk10_0 = 2;
         }
     } else if (gSystem.newKeys & PAD_BUTTON_B) {
         sub_02018410(data->unk20, 0);
         PlaySE(SEQ_SE_GS_GEARCANCEL);
         if (data->currentMenuEntryId == MENU_ENTRY_6 && data->menuEntries[data->currentMenuEntryId].value == 0) {
-            Set2dSpriteAnimSeqNo(data->sprites[7], 3);
+            Sprite_SetAnimCtrlSeq(data->sprites[7], 3);
         } else {
-            Set2dSpriteAnimSeqNo(data->sprites[7], 2);
+            Sprite_SetAnimCtrlSeq(data->sprites[7], 2);
         }
         data->unk10_0 = 2;
     }
@@ -1120,7 +917,7 @@ static void OptionsApp_HandleInput(OptionsApp_Data *data) {
             sub_02018410(data->unk20, 1);
             data->menuEntries[data->currentMenuEntryId].value = 1;
             ov54_021E69D4(data, data->currentMenuEntryId);
-            Set2dSpriteAnimSeqNo(data->sprites[8], 3);
+            Sprite_SetAnimCtrlSeq(data->sprites[8], 3);
             break;
 
         case 14: // Quit button
@@ -1133,7 +930,7 @@ static void OptionsApp_HandleInput(OptionsApp_Data *data) {
             sub_02018410(data->unk20, 1);
             data->menuEntries[data->currentMenuEntryId].value = 0;
             ov54_021E69D4(data, data->currentMenuEntryId);
-            Set2dSpriteAnimSeqNo(data->sprites[7], 3);
+            Sprite_SetAnimCtrlSeq(data->sprites[7], 3);
             break;
 
         default: {
@@ -1166,16 +963,16 @@ static void ov54_021E69D4(OptionsApp_Data *data, u32 menuEntryId) {
     if (menuEntryId == MENU_ENTRY_6) {
         ToggleBgLayer(GF_BG_LYR_MAIN_0, GF_PLANE_TOGGLE_OFF);
         if (data->menuEntries[menuEntryId].value == 0) {
-            Set2dSpriteAnimSeqNo(data->sprites[7], 1);
-            Set2dSpriteAnimSeqNo(data->sprites[8], 0);
+            Sprite_SetAnimCtrlSeq(data->sprites[7], 1);
+            Sprite_SetAnimCtrlSeq(data->sprites[8], 0);
         } else {
-            Set2dSpriteAnimSeqNo(data->sprites[7], 0);
-            Set2dSpriteAnimSeqNo(data->sprites[8], 1);
+            Sprite_SetAnimCtrlSeq(data->sprites[7], 0);
+            Sprite_SetAnimCtrlSeq(data->sprites[8], 1);
         }
     } else {
         BgSetPosTextAndCommit(data->bgConfig, GF_BG_LYR_MAIN_0, BG_POS_OP_SET_Y, sMenuEntryBorderYCoords[data->currentMenuEntryId]);
-        Set2dSpriteAnimSeqNo(data->sprites[7], 0);
-        Set2dSpriteAnimSeqNo(data->sprites[8], 0);
+        Sprite_SetAnimCtrlSeq(data->sprites[7], 0);
+        Sprite_SetAnimCtrlSeq(data->sprites[8], 0);
         ToggleBgLayer(GF_BG_LYR_MAIN_0, GF_PLANE_TOGGLE_ON);
     }
 }
@@ -1210,8 +1007,8 @@ static void OptionsApp_SetupSpriteRenderer(OptionsApp_Data *data) {
         .charModeMain = GX_OBJVRAMMODE_CHAR_1D_32K,
         .charModeSub  = GX_OBJVRAMMODE_CHAR_1D_32K,
     };
-    sub_0200CF70(data->spriteRenderer, &unk1, &unk2, 32);
-    sub_0200CFF4(data->spriteRenderer, data->spriteGfxHandler, 9);
+    SpriteRenderer_CreateOamCharPlttManagers(data->spriteRenderer, &unk1, &unk2, 32);
+    SpriteRenderer_CreateSpriteList(data->spriteRenderer, data->spriteGfxHandler, 9);
 
     u16 fileIdList[7] = {
         NARC_resdat_resdat_00000022_bin,
@@ -1237,10 +1034,10 @@ static void OptionsApp_SetupSprites(OptionsApp_Data *data) {
     for (u16 i = 0; i < NELEMS(data->sprites); i++) {
         data->sprites[i] = SpriteRenderer_CreateSprite(data->spriteRenderer, data->spriteGfxHandler, &ov54_021E6EAC[i]);
         thunk_Sprite_SetPriority(data->sprites[i], 2);
-        Set2dSpriteAnimActiveFlag(data->sprites[i], TRUE);
+        Sprite_SetAnimActiveFlag(data->sprites[i], TRUE);
     }
 
-    Set2dSpriteVisibleFlag(data->sprites[7], TRUE);
+    Sprite_SetVisibleFlag(data->sprites[7], TRUE);
 }
 
 static void OptionsApp_SetActiveButtonsXPosition(OptionsApp_Data *data) {

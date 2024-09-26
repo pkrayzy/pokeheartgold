@@ -4,6 +4,7 @@
 
 #include "constants/flags.h"
 
+#include "application/view_rankings.h"
 #include "battle/battle_022378C0.h"
 
 #include "alph_puzzle.h"
@@ -29,7 +30,6 @@
 #include "overlay_109.h"
 #include "overlay_111.h"
 #include "overlay_113.h"
-#include "overlay_121.h"
 #include "overlay_14.h"
 #include "overlay_15.h"
 #include "overlay_16.h"
@@ -62,12 +62,13 @@
 #include "save_pokeathlon.h"
 #include "save_special_ribbons.h"
 #include "save_trainer_card.h"
+#include "save_wifi_history.h"
+#include "start_menu.h"
 #include "sys_flags.h"
 #include "trainer_data.h"
 #include "unk_020192D0.h"
 #include "unk_0202C034.h"
 #include "unk_0202C730.h"
-#include "unk_0202CA24.h"
 #include "unk_0202D230.h"
 #include "unk_0202DB34.h"
 #include "unk_02031904.h"
@@ -130,7 +131,7 @@ FS_EXTERN_OVERLAY(OVY_109);
 FS_EXTERN_OVERLAY(OVY_110);
 FS_EXTERN_OVERLAY(OVY_111);
 FS_EXTERN_OVERLAY(OVY_113);
-FS_EXTERN_OVERLAY(OVY_121);
+FS_EXTERN_OVERLAY(view_rankings_app);
 
 static PartyMenuArgs *PartyMenu_CreateArgs(HeapID heapId, FieldSystem *fieldSystem, int a2, PartyMenuContext context);
 static BOOL Task_OpenPartyMenuForUnionRoomBattleSelect(TaskManager *taskman);
@@ -342,7 +343,7 @@ PartyMenuArgs *TaskManager_LaunchPartyMenu_UnionRoomBattleSelect(TaskManager *ta
     args->minMonsToSelect    = 2;
     args->maxMonsToSelect    = 2;
     args->maxLevel           = 30;
-    args->unk_14             = NULL;
+    args->linkBattleRuleset  = NULL;
 
     data->partyMenu = args;
     TaskManager_Call(taskman, Task_OpenPartyMenuForUnionRoomBattleSelect, data);
@@ -868,7 +869,7 @@ static void InitWirelessTradeSelectMonArgs(WirelessTradeSelectMonArgs *args, Fie
     args->profile        = Save_PlayerData_GetProfileAddr(fieldSystem->saveData);
     args->party          = SaveArray_Party_Get(fieldSystem->saveData);
     args->palPad         = SaveArray_Get(fieldSystem->saveData, SAVE_PALPAD);
-    args->unk14          = sub_0202CA44(fieldSystem->saveData);
+    args->wifiHistory    = Save_WiFiHistory_Get(fieldSystem->saveData);
     args->options        = Save_PlayerData_GetOptionsAddr(fieldSystem->saveData);
     args->pokedex        = Save_Pokedex_Get(fieldSystem->saveData);
     args->natDexEnabled  = SaveArray_IsNatDexEnabled(fieldSystem->saveData);
@@ -975,7 +976,7 @@ static BOOL Task_WirelessTrade(TaskManager *taskman) {
         data->wirelessTradeSelectMon.unk30++;
         data->state          = 2;
         GameStats *gameStats = Save_GameStats_Get(fieldSystem->saveData);
-        GameStats_AddScore(gameStats, GAME_STAT_UNK16);
+        GameStats_AddScore(gameStats, SCORE_EVENT_16);
         if (sub_02039998()) {
             GameStats_Inc(gameStats, GAME_STAT_UNK114);
         }
@@ -1035,7 +1036,7 @@ static BOOL Task_NamingScreen(TaskManager *taskman) {
         data->state++;
         break;
     case 1:
-        CallApplicationAsTask(taskman, &_02102610, data->args);
+        CallApplicationAsTask(taskman, &sOverlayTemplate_NamingScreen, data->args);
         data->state++;
         break;
     case 2:
@@ -1044,12 +1045,12 @@ static BOOL Task_NamingScreen(TaskManager *taskman) {
         break;
     case 3:
         NamingScreenArgs *args = data->args;
-        if (args->unk0 == 1) {
-            if (String_Compare(args->unk18, data->unk10) == 0) {
+        if (args->kind == 1) {
+            if (String_Compare(args->nameInputString, data->unk10) == 0) {
                 data->args->unk14 = 1;
             }
-        } else if (args->unk0 == 5) {
-            u16 *var2                   = String_cstr(args->unk18);
+        } else if (args->kind == 5) {
+            u16 *var2                   = String_cstr(args->nameInputString);
             SAV_FRIEND_GRP *friendGroup = Save_FriendGroup_Get(fieldSystem->saveData);
             if (sub_0202C88C(friendGroup, var2)) {
                 data->args->unk14 = 2;
@@ -1062,7 +1063,7 @@ static BOOL Task_NamingScreen(TaskManager *taskman) {
         if (data->retVar != NULL) {
             *retVar = data->args->unk14;
         }
-        sub_0208311C(data->args);
+        NamingScreen_DeleteArgs(data->args);
         String_Delete(data->unk10);
         FreeToHeap(data);
         return TRUE;
@@ -1073,16 +1074,16 @@ static BOOL Task_NamingScreen(TaskManager *taskman) {
 static void SetName(TaskManager *taskman) {
     FieldSystem *fieldSystem = TaskManager_GetFieldSystem(taskman);
     NamingScreenData *data   = TaskManager_GetEnvironment(taskman);
-    switch (data->args->unk0) {
-    case 0:
+    switch (data->args->kind) {
+    case NAME_SCREEN_PLAYER:
         PlayerProfile *profile = Save_PlayerData_GetProfileAddr(fieldSystem->saveData);
         Save_Profile_PlayerName_Set(profile, data->args->unk1C);
         break;
-    case 3:
+    case NAME_SCREEN_RIVAL:
         SAVE_MISC_DATA *miscData = Save_Misc_Get(fieldSystem->saveData);
-        Save_Misc_RivalName_Set(miscData, data->args->unk18);
+        Save_Misc_RivalName_Set(miscData, data->args->nameInputString);
         break;
-    case 1:
+    case NAME_SCREEN_POKEMON:
         Pokemon *mon;
         if (data->partyIdx == 0xff) {
             BugContest *contest = FieldSystem_BugContest_Get(fieldSystem);
@@ -1092,12 +1093,12 @@ static void SetName(TaskManager *taskman) {
         }
         SetMonData(mon, MON_DATA_NICKNAME_FLAT_COMPARE, data->args->unk1C);
         break;
-    case 5:
+    case NAME_SCREEN_GROUP:
         SAV_FRIEND_GRP *friendGroup = Save_FriendGroup_Get(fieldSystem->saveData);
-        sub_0202C7F8(friendGroup, 0, 0, data->args->unk18);
+        sub_0202C7F8(friendGroup, 0, 0, data->args->nameInputString);
         break;
-    case 2:
-    case 4:
+    case NAME_SCREEN_BOX:
+    case NAME_SCREEN_UNK4:
     default:
         break;
     }
@@ -1121,8 +1122,8 @@ void CallTask_NamingScreen(TaskManager *taskman, NameScreenType type, int specie
         } else {
             mon = Party_GetMonByIndex(SaveArray_Party_Get(fieldSystem->saveData), data->partyIdx);
         }
-        data->args->gender = GetMonData(mon, MON_DATA_GENDER, NULL);
-        data->args->form   = GetMonData(mon, MON_DATA_FORM, NULL);
+        data->args->monGender = GetMonData(mon, MON_DATA_GENDER, NULL);
+        data->args->monForm   = GetMonData(mon, MON_DATA_FORM, NULL);
         if (defaultStr != NULL) {
             CopyU16ArrayToString(data->unk10, defaultStr);
         }
@@ -1132,7 +1133,7 @@ void CallTask_NamingScreen(TaskManager *taskman, NameScreenType type, int specie
         break;
     default:
         if (defaultStr != NULL) {
-            CopyU16ArrayToString(data->args->unk18, defaultStr);
+            CopyU16ArrayToString(data->args->nameInputString, defaultStr);
         }
         break;
     }
@@ -1178,7 +1179,7 @@ void sub_0203F844(FieldSystem *fieldSystem, u16 a1) {
     args->pcStorage          = SaveArray_PCStorage_Get(fieldSystem->saveData);
     args->pokedex            = Save_Pokedex_Get(fieldSystem->saveData);
     args->unk14              = sub_0202C6F4(fieldSystem->saveData);
-    args->unk18              = sub_0202CA44(fieldSystem->saveData);
+    args->wifiHistory        = Save_WiFiHistory_Get(fieldSystem->saveData);
     args->profile            = Save_PlayerData_GetProfileAddr(fieldSystem->saveData);
     args->options            = Save_PlayerData_GetOptionsAddr(fieldSystem->saveData);
     args->gameStats          = Save_GameStats_Get(fieldSystem->saveData);
@@ -1396,7 +1397,7 @@ LegendaryCinematicArgs *LegendaryCinematic_LaunchApp(FieldSystem *fieldSystem, U
     return args;
 }
 
-void sub_0203FD08(FieldSystem *fieldSystem, UnkStruct_02097D48 *args) {
-    static const OVY_MGR_TEMPLATE _020FA494 = { ov121_021E5900, ov121_021E590C, ov121_021E59BC, FS_OVERLAY_ID(OVY_121) };
-    FieldSystem_LaunchApplication(fieldSystem, &_020FA494, args);
+void LaunchApp_ViewRankings(FieldSystem *fieldSystem, ViewRankingsArgs *args) {
+    static const OVY_MGR_TEMPLATE sViewRankingsAppTemplate = { ViewRankingsApp_Init, ViewRankingsApp_Main, ViewRankingsApp_Exit, FS_OVERLAY_ID(view_rankings_app) };
+    FieldSystem_LaunchApplication(fieldSystem, &sViewRankingsAppTemplate, args);
 }

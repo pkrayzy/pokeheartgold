@@ -253,8 +253,8 @@ _022662C0:
 _022662CA:
 	add r0, r4, #0
 	bl FreeToHeap
-	bl sub_02002BD4
-	bl sub_02002BF4
+	bl TextFlags_ResetHasSpedUpInput
+	bl TextFlags_ResetHasContinuedInput
 	ldr r0, _02266314 ; =ov12_02269954
 	ldr r2, _02266318 ; =0x0000D6D8
 	add r1, r6, #0
@@ -1167,7 +1167,7 @@ _02266A76:
 	ldr r0, _02266ABC ; =0x000005D8
 	ldr r0, [r5, r0]
 	ldr r0, [r0]
-	bl Set2dSpriteAnimSeqNo
+	bl Sprite_SetAnimCtrlSeq
 	ldr r0, _02266ABC ; =0x000005D8
 	ldr r0, [r5, r0]
 	ldr r0, [r0]
@@ -1179,7 +1179,7 @@ _02266A76:
 	lsl r0, r0, #4
 	ldr r0, [r5, r0]
 	ldr r0, [r0]
-	bl Set2dSpriteAnimSeqNo
+	bl Sprite_SetAnimCtrlSeq
 	mov r0, #0x5f
 	lsl r0, r0, #4
 	ldr r0, [r5, r0]
@@ -4215,7 +4215,7 @@ _02268356:
 	bl Pokemon_GetIconPalette
 	add r1, r0, #0
 	ldr r0, [r6]
-	bl sub_02024AA8
+	bl Sprite_SetPalOffsetRespectVramOffset
 	ldr r0, [sp, #0x10]
 	mov r7, #0
 	cmp r0, #0
@@ -4357,7 +4357,7 @@ _02268488:
 	bl Pokemon_GetIconPalette
 	add r1, r0, #0
 	ldr r0, [r4]
-	bl sub_02024AA8
+	bl Sprite_SetPalOffsetRespectVramOffset
 	add r0, r4, #0
 	bl UnkImageStruct_TickSpriteAnimation1Frame
 	ldr r0, _022684E0 ; =0x000006EC
@@ -7045,12 +7045,12 @@ _02269950: .word 0x00000694
 ov12_02269954: ; 0x02269954
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r1, #0
-	bl sub_02002BC4
+	bl TextFlags_GetHasSpedUpInput
 	add r6, r0, #0
-	bl sub_02002BE4
+	bl TextFlags_GetHasContinuedInput
 	add r7, r0, #0
-	bl sub_02002BD4
-	bl sub_02002BF4
+	bl TextFlags_ResetHasSpedUpInput
+	bl TextFlags_ResetHasContinuedInput
 	ldr r0, [r5]
 	bl BattleSystem_GetPaletteData
 	add r4, r0, #0
@@ -9672,7 +9672,7 @@ _0226AC84:
 	ldr r0, [r5, r1]
 	mov r1, #1
 	ldr r0, [r0]
-	bl Set2dSpriteAnimSeqNo
+	bl Sprite_SetAnimCtrlSeq
 	mov r0, #0x6f
 	lsl r0, r0, #4
 	mov r3, #0x11

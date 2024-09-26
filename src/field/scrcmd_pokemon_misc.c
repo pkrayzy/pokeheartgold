@@ -29,13 +29,14 @@
 #include "overlay_58.h"
 #include "photo_album.h"
 #include "pokedex.h"
+#include "save_wifi_history.h"
 #include "scrcmd.h"
 #include "sound_02004A44.h"
 #include "sys_vars.h"
 #include "system.h"
 #include "unk_02005D10.h"
 #include "unk_0200FA24.h"
-#include "unk_0202CA24.h"
+#include "unk_02023694.h"
 #include "unk_02030A98.h"
 #include "unk_02031904.h"
 #include "unk_02031AF0.h"
@@ -680,7 +681,7 @@ BOOL ScrCmd_700(ScriptContext *ctx) {
 }
 
 BOOL ScrCmd_BattleTowerSetUpMultiBattle(ScriptContext *ctx) {
-    void *data = sub_0202CA44(ctx->fieldSystem->saveData);
+    void *data = Save_WiFiHistory_Get(ctx->fieldSystem->saveData);
     sub_02039F68(data);
     return TRUE;
 }
@@ -923,7 +924,7 @@ BOOL ScrCmd_741(ScriptContext *ctx) {
     }
 
     BufferIntegerAsString(*msgfmt, 2, *price, 4, PRINTING_MODE_LEFT_ALIGN, 1);
-    BufferIntegerAsString(*msgfmt, 3, unkVar, 3, PRINTING_MODE_LEFT_ALIGN, 1); // richness..?
+    BufferIntegerAsString(*msgfmt, 3, unkVar, 3, PRINTING_MODE_LEFT_ALIGN, 1);      // richness..?
     BufferIntegerAsString(*msgfmt, 4, unkOut.unk2, 3, PRINTING_MODE_LEFT_ALIGN, 1); // smoothness..?
 
     *unkPtrC = unkOut.unk0;

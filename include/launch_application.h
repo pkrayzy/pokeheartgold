@@ -41,8 +41,8 @@
 #include "save_palpad.h"
 #include "save_pokeathlon.h"
 #include "save_special_ribbons.h"
+#include "save_wifi_history.h"
 #include "script.h"
-#include "unk_0202CA24.h"
 #include "unk_02088288.h"
 #include "unk_02092BE8.h"
 #include "unk_02097B78.h"
@@ -53,7 +53,10 @@ typedef enum NameScreenType {
     NAME_SCREEN_POKEMON,
     NAME_SCREEN_BOX,
     NAME_SCREEN_RIVAL,
-    NAME_SCREEN_GROUP = 5,
+    NAME_SCREEN_UNK4,
+    NAME_SCREEN_GROUP,
+    NAME_SCREEN_UNK6,
+    NAME_SCREEN_UNK7,
 } NameScreenType;
 
 typedef enum PocketType {
@@ -99,9 +102,9 @@ PalPadArgs *PalPad_LaunchApp(FieldSystem *fieldSystem, SaveData *saveData, HeapI
 BerryPotsArgs *BerryPots_LaunchApp(FieldSystem *fieldSystem);
 UnownReportArgs *UnownReport_LaunchApp(FieldSystem *fieldSystem);
 PartyMenuArgs *PartyMenu_LaunchApp_Gracidea(FieldSystem *fieldSystem, HeapID heapId, u16 itemId);
-PartyMenuArgs *PartyMenu_LaunchApp_Unk2(HeapID heapId, FieldSystem *fieldSystem); // todo: party select screen
+PartyMenuArgs *PartyMenu_LaunchApp_Unk2(HeapID heapId, FieldSystem *fieldSystem);        // todo: party select screen
 PartyMenuArgs *PartyMenu_LaunchApp_InGameTrade(HeapID heapId, FieldSystem *fieldSystem); // todo: party trade screen
-PartyMenuArgs *SelectPartyMonAndLearnMove(TaskManager *taskManager, HeapID heapId); // todo: union party select screen
+PartyMenuArgs *SelectPartyMonAndLearnMove(TaskManager *taskManager, HeapID heapId);      // todo: union party select screen
 int PartyMenuArgs_GetSlot(struct PartyMenuArgs *partyWork);
 int sub_0203E5F8(struct PartyMenuArgs *partyWork);
 void sub_0203F570(FieldSystem *fieldSystem, SaveData *saveData);
@@ -146,7 +149,7 @@ void PokeathlonCourse_LaunchApp(FieldSystem *fieldSystem, PokeathlonCourseArgs *
 void sub_0203FC68(FieldSystem *fieldSystem, void *args);
 void sub_0203FC90(FieldSystem *fieldSystem, void *args);
 LegendaryCinematicArgs *LegendaryCinematic_LaunchApp(FieldSystem *a0, UnkStruct_0203FCC4 *a1, u16 a2, u16 a3, HeapID a4);
-void sub_0203FD08(FieldSystem *fieldSystem, UnkStruct_02097D48 *args);
+void LaunchApp_ViewRankings(FieldSystem *fieldSystem, ViewRankingsArgs *args);
 PartyMenuArgs *PartyMenu_LaunchApp_Unk1(FieldSystem *fieldSystem, FieldMoveCheckData *fieldMoveCheckData, u8 partySlot);
 void CallTask_NamingScreen(TaskManager *taskManager, NameScreenType type, int species, int maxLen, int initPos, const u16 *defaultStr, u16 *retVar);
 void sub_0203E960(TaskManager *a0, int a1, UnkStruct_0203E8C8 *a2, u16 *a3, u16 *a4);

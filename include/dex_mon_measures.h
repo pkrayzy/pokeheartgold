@@ -1,7 +1,7 @@
 #ifndef POKEHEARTGOLD_DEX_MON_MEASURES_H
 #define POKEHEARTGOLD_DEX_MON_MEASURES_H
 
-#include "filesystem_files_def.h"
+#include "filesystem.h"
 #include "heap.h"
 
 typedef struct PokedexData {

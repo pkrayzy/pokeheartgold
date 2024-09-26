@@ -4,7 +4,7 @@
 #include "constants/party_menu.h"
 
 #include "bag_types_def.h"
-#include "field_types_def.h"
+#include "battle_regulation.h"
 #include "gf_3d_vramman.h"
 #include "mail.h"
 #include "message_printer.h"
@@ -14,7 +14,6 @@
 #include "unk_02014DA0.h"
 #include "unk_02020654.h"
 #include "unk_0202E41C.h"
-#include "unk_02074944.h"
 #include "yes_no_prompt.h"
 
 #define FIELD_MOVE_CHECK_TREE_F      0
@@ -305,7 +304,7 @@ typedef struct PartyMenuArgs {
     Mailbox *mailbox;
     Options *options;
     UnkStruct_0202E474 *unk_10;
-    UnkStruct_02074944 *unk_14;
+    LinkBattleRuleset *linkBattleRuleset;
     FieldMoveCheckData *fieldMoveCheckData;
     FieldSystem *fieldSystem;
     BOOL *menuInputStatePtr;
@@ -354,32 +353,32 @@ typedef struct PartyMenuContextButtonAnimData {
 } PartyMenuContextButtonAnimData;
 
 typedef struct PartyMenuMonsDrawState {
-    String *nickname; // 828
-    u16 species; // 82C
-    u16 hp; // 82E
-    u16 maxHp; // 830
-    u16 level; // 832
-    u16 heldItem; // 834
+    String *nickname;               // 828
+    u16 species;                    // 82C
+    u16 hp;                         // 82E
+    u16 maxHp;                      // 830
+    u16 level;                      // 832
+    u16 heldItem;                   // 834
     u16 status                : 12; // 836
     u16 dontPrintGenderSymbol : 1;
     u16 gender                : 2;
     u16 isContestCompatible   : 1;
-    u8 isEgg; // 838
-    u8 form; // 839
-    u16 capsule; // 83A
-    s8 unk_14; // 83C
-    s8 unk_15; // 83D
-    s16 iconX; // 83E
-    s16 iconY; // 840
-    s16 statusIconX; // 842
-    s16 statusIconY; // 844
-    s16 heldItemX; // 846
-    s16 heldItemY; // 848
-    u8 filler_22[2]; // alignment padding
-    Sprite *iconSprite; // 84C
+    u8 isEgg;                     // 838
+    u8 form;                      // 839
+    u16 capsule;                  // 83A
+    s8 unk_14;                    // 83C
+    s8 unk_15;                    // 83D
+    s16 iconX;                    // 83E
+    s16 iconY;                    // 840
+    s16 statusIconX;              // 842
+    s16 statusIconY;              // 844
+    s16 heldItemX;                // 846
+    s16 heldItemY;                // 848
+    u8 filler_22[2];              // alignment padding
+    Sprite *iconSprite;           // 84C
     Sprite *mainScreenIconSprite; // 850
-    u8 unk_2C; // 854
-    u8 active; // 855
+    u8 unk_2C;                    // 854
+    u8 active;                    // 855
 } PartyMenuMonsDrawState;
 
 typedef struct PartyMenuSwapMonsData {
@@ -395,7 +394,7 @@ typedef struct PartyMenuSwapMonsData {
 struct PartyMenu {
     BgConfig *bgConfig;
     Window windows[PARTY_MENU_WINDOW_ID_MAX];
-    Window levelUpStatsWindow[1]; // 0x284
+    Window levelUpStatsWindow[1];       // 0x284
     Window contextMenuButtonWindows[8]; // 0x294
     u16 unk_314[6 * 0x10];
     u16 unk_3D4[6 * 0x10];
@@ -407,20 +406,20 @@ struct PartyMenu {
     Sprite *sprites[PARTY_MENU_SPRITE_ID_MAX]; // 0x660
     void *unk_6D4[PARTY_MENU_SPRITE_ID_MAX];
     Sprite *mainScreenStatusSprites[29]; // 0x748
-    MessagePrinter *msgPrinter; // 0x7bc
-    MsgData *msgData; // 0x7c0
-    MessageFormat *msgFormat; // 0x7c4
-    String *formattedStrBuf; // 0x7c8
+    MessagePrinter *msgPrinter;          // 0x7bc
+    MsgData *msgData;                    // 0x7c0
+    MessageFormat *msgFormat;            // 0x7c4
+    String *formattedStrBuf;             // 0x7c8
     String *unformattedStrBuf;
     String *contextMenuStrings[PARTY_MON_CONTEXT_MENU_NUM_STRINGS]; // 0x7d0
-    LISTMENUITEM *listMenuItems; // 0x820
+    LISTMENUITEM *listMenuItems;                                    // 0x820
     PartyMenuContextMenuCursor *contextMenuCursor;
     PartyMenuMonsDrawState monsDrawState[PARTY_SIZE]; // 0x828
     const UnkStruct_02020654 *unk_948;
     PartyMenuSwapMonsData swapMonsData;
     int (*itemUseCallback)(PartyMenu *);
     int (*yesCallback)(PartyMenu *); // 0xc58
-    int (*noCallback)(PartyMenu *); // 0xc5c
+    int (*noCallback)(PartyMenu *);  // 0xc5c
     u8 unk_C60;
     u8 unk_C61;
     u8 afterTextPrinterState;
@@ -432,11 +431,11 @@ struct PartyMenu {
     u8 unk_C66;
     u8 levelUpLearnMovesLoopState;
     u16 levelUpStatsTmp[6];
-    Pokedex *pokedex; // 0xc74
+    PokedexData *pokedex; // 0xc74
     int topScreenPanelYPos;
     BOOL topScreenPanelShow;
     IconFormChangeData *iconFormChange; // C80
-    GF3DVramMan *gf3dVramMan; // C84
+    GF3DVramMan *gf3dVramMan;           // C84
     YesNoPrompt *yesNoPrompt;
     u8 filler_C8C[4];
     PartyMenuContextButtonAnimData contextMenuButtonAnim;

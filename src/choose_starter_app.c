@@ -14,9 +14,11 @@
 #include "gf_gfx_loader.h"
 #include "launch_application.h"
 #include "obj_char_transfer.h"
+#include "obj_pltt_transfer.h"
 #include "render_text.h"
 #include "render_window.h"
 #include "sound.h"
+#include "sprite.h"
 #include "system.h"
 #include "text.h"
 #include "touchscreen.h"
@@ -27,8 +29,6 @@
 #include "unk_0200FA24.h"
 #include "unk_02013FDC.h"
 #include "unk_02020B8C.h"
-#include "unk_02022588.h"
-#include "unk_02023694.h"
 #include "unk_02026E30.h"
 
 enum ChooseStarterInput {
@@ -150,7 +150,7 @@ struct StarterChooseMonSpriteData {
     GF_2DGfxResMan *plttResMan;
     GF_2DGfxResMan *cellResMan;
     GF_2DGfxResMan *animResMan;
-    GF_2DGfxResMan *multiCellResMan; // unused
+    GF_2DGfxResMan *multiCellResMan;    // unused
     GF_2DGfxResMan *multiCellAnmResMan; // unused
     struct StarterChooseMonObjResPtrs objs[3];
     void *charDatas[3];
@@ -299,8 +299,8 @@ BOOL ChooseStarter_Init(OVY_MANAGER *ovy, int *state_p) {
     initBallModelPositions(work);
     createMonSprites(work);
     TextFlags_SetCanABSpeedUpPrint(FALSE);
-    sub_02002B50(TRUE);
-    sub_02002B8C(FALSE);
+    TextFlags_SetAutoScrollParam(TRUE);
+    TextFlags_SetCanTouchSpeedUpPrint(FALSE);
     return TRUE;
 }
 
@@ -540,8 +540,8 @@ BOOL ChooseStarter_Exit(OVY_MANAGER *ovy, int *state) {
     struct ChooseStarterArgs *args    = OverlayManager_GetArgs(ovy);
 
     TextFlags_SetCanABSpeedUpPrint(FALSE);
-    sub_02002B50(FALSE);
-    sub_02002B8C(FALSE);
+    TextFlags_SetAutoScrollParam(FALSE);
+    TextFlags_SetCanTouchSpeedUpPrint(FALSE);
     args->cursorPos = work->curSelection;
     Main_SetVBlankIntrCB(NULL, NULL);
     DeleteCameraTranslationWrapper(work->cameraTranslation);
@@ -556,7 +556,7 @@ BOOL ChooseStarter_Exit(OVY_MANAGER *ovy, int *state) {
     Destroy2DGfxResObjMan(work->monSpriteData.animResMan);
     OamManager_Free();
     ObjCharTransfer_Destroy();
-    sub_02022608();
+    ObjPlttTransfer_Destroy();
     freeWindow(work->winTop);
     freeWindow(work->winBottom);
     FreeBgTilemapBuffer(work->bgConfig, 1);
@@ -620,9 +620,9 @@ static void createOamManager(HeapID heapId) {
         baseTrans.heapId = heapId;
         ObjCharTransfer_InitEx(&baseTrans, GX_OBJVRAMMODE_CHAR_1D_128K, GX_OBJVRAMMODE_CHAR_1D_32K);
     }
-    sub_02022588(3, heapId);
+    ObjPlttTransfer_Init(3, heapId);
     ObjCharTransfer_ClearBuffers();
-    sub_02022638();
+    ObjPlttTransfer_Reset();
 }
 
 static void init3dEngine(struct ChooseStarterAppWork *work) {
@@ -644,7 +644,7 @@ static void init3dEngine(struct ChooseStarterAppWork *work) {
 }
 
 static void update3dObjectsMain(struct ChooseStarterAppWork *work) {
-    sub_0202457C(work->monSpriteData.spriteList);
+    SpriteList_RenderAndAnimateSprites(work->monSpriteData.spriteList);
     Thunk_G3X_Reset();
     NNS_G3dGePushMtx();
     Camera_PushLookAtToNNSGlb();
@@ -1229,22 +1229,22 @@ static void createOneMonRender(struct StarterChooseMonSpriteData *pMonSpriteData
     template.heapId              = heapId;
     template.position.x          = 128 * FX32_ONE;
     template.position.y          = 288 * FX32_ONE;
-    pMonSpriteData->sprites[idx] = CreateSprite(&template);
-    Set2dSpriteAnimActiveFlag(pMonSpriteData->sprites[idx], FALSE);
-    Set2dSpriteAnimSeqNo(pMonSpriteData->sprites[idx], 0);
-    Set2dSpriteVisibleFlag(pMonSpriteData->sprites[idx], FALSE);
+    pMonSpriteData->sprites[idx] = Sprite_CreateAffine(&template);
+    Sprite_SetAnimActiveFlag(pMonSpriteData->sprites[idx], FALSE);
+    Sprite_SetAnimCtrlSeq(pMonSpriteData->sprites[idx], 0);
+    Sprite_SetVisibleFlag(pMonSpriteData->sprites[idx], FALSE);
 }
 
 static void setAllButSelectedMonSpritesInvisible(struct ChooseStarterAppWork *work) {
     setAllMonSpritesInvisible(&work->monSpriteData);
-    Set2dSpriteVisibleFlag(work->monSpriteData.sprites[work->curSelection], TRUE);
+    Sprite_SetVisibleFlag(work->monSpriteData.sprites[work->curSelection], TRUE);
 }
 
 static void setAllMonSpritesInvisible(struct StarterChooseMonSpriteData *a0) {
     int i;
 
     for (i = 0; i < 3; i++) {
-        Set2dSpriteVisibleFlag(a0->sprites[i], FALSE);
+        Sprite_SetVisibleFlag(a0->sprites[i], FALSE);
     }
 }
 

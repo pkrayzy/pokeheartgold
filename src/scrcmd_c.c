@@ -51,6 +51,7 @@
 #include "safari_zone.h"
 #include "save_arrays.h"
 #include "save_follow_mon.h"
+#include "save_link_ruleset.h"
 #include "save_local_field_data.h"
 #include "scrcmd.h"
 #include "script_pokemon_util.h"
@@ -62,7 +63,6 @@
 #include "text.h"
 #include "trainer_memo.h"
 #include "unk_0200FA24.h"
-#include "unk_020290B4.h"
 #include "unk_0202C034.h"
 #include "unk_02034B0C.h"
 #include "unk_02035900.h"
@@ -849,8 +849,8 @@ BOOL ScrCmd_TrainerTips(ScriptContext *ctx) {
     StringExpandPlaceholders(*msg_fmt, *unk, *tmp_str);
 
     TextFlags_SetCanABSpeedUpPrint(TRUE);
-    sub_02002B50(FALSE);
-    sub_02002B8C(FALSE);
+    TextFlags_SetAutoScrollParam(FALSE);
+    TextFlags_SetCanTouchSpeedUpPrint(FALSE);
 
     Window *window  = ov01_021F3D80(fieldSystem->unk68);
     u8 text_speed   = Options_GetTextFrameDelay(Save_PlayerData_GetOptionsAddr(fieldSystem->saveData));
@@ -3219,7 +3219,7 @@ BOOL ScrCmd_MakeObjectVisible(ScriptContext *ctx) {
     return FALSE;
 }
 
-BOOL ScrCmd_376(ScriptContext *ctx) { // todo: mail screen
+BOOL ScrCmd_376(ScriptContext *ctx) {                                                                // todo: mail screen
     UnkStruct_0203F074 **p_work = FieldSysGetAttrAddr(ctx->fieldSystem, SCRIPTENV_RUNNING_APP_DATA); // MailAppData
     *p_work                     = sub_0203F074(ctx->fieldSystem, HEAP_ID_FIELD);
     SetupNativeScript(ctx, ScrNative_WaitApplication_DestroyTaskData);
@@ -3233,10 +3233,10 @@ BOOL ScrCmd_377(ScriptContext *ctx) {
     return FALSE;
 }
 
-BOOL ScrCmd_378(ScriptContext *ctx) {
-    u16 r4 = ScriptGetVar(ctx);
-    u16 r2 = ScriptGetVar(ctx);
-    sub_02097D3C(ctx->fieldSystem, r4, r2);
+BOOL ScrCmd_ViewRankings(ScriptContext *ctx) {
+    u16 pageScrollParam = ScriptGetVar(ctx);
+    u16 cursorPos       = ScriptGetVar(ctx);
+    FieldSystem_LaunchTask_ViewRankingsApp(ctx->fieldSystem, pageScrollParam, cursorPos);
     return TRUE;
 }
 
@@ -5427,7 +5427,7 @@ BOOL ScrCmd_833(ScriptContext *ctx) {
 
 BOOL ScrCmd_837(ScriptContext *ctx) {
     u16 *p_ret = ScriptGetVarPointer(ctx);
-    if (sub_020291A4(ctx->fieldSystem->saveData, 0)) {
+    if (Save_LinkBattleRuleset_GetByIndex(ctx->fieldSystem->saveData, 0) != NULL) {
         *p_ret = TRUE;
     } else {
         *p_ret = FALSE;
