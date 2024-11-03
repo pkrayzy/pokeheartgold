@@ -17,6 +17,8 @@ cmake-build-debug/
 
 # VSCode folder
 .vscode/
+/build/*
+./build/*
 
 # "cmake.buildDirectory": "${workspaceFolder}/build-cmake-${buildType}"
 build-cmake-*
