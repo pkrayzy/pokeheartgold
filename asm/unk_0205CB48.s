@@ -14,8 +14,8 @@
 
 	.text
 
-	thumb_func_start sub_0205CB48
-sub_0205CB48: ; 0x0205CB48
+	thumb_func_start PlayerAvatar_MoveControl
+PlayerAvatar_MoveControl: ; 0x0205CB48
 	push {r3, r4, r5, r6, r7, lr}
 	add r7, r1, #0
 	mov r1, #0
@@ -86,7 +86,7 @@ _0205CBC4:
 	bl sub_0205CC94
 _0205CBE2:
 	pop {r3, r4, r5, r6, r7, pc}
-	thumb_func_end sub_0205CB48
+	thumb_func_end PlayerAvatar_MoveControl
 
 	thumb_func_start sub_0205CBE4
 sub_0205CBE4: ; 0x0205CBE4
@@ -397,8 +397,8 @@ _0205CE60: .word SEQ_SE_GS_EDAPAKI
 _0205CE64: .word _020FCB98 + 2
 	thumb_func_end sub_0205CD70
 
-	thumb_func_start sub_0205CE68
-sub_0205CE68: ; 0x0205CE68
+	thumb_func_start PlayerAvatar_UpdateMovement
+PlayerAvatar_UpdateMovement: ; 0x0205CE68
 	push {r3, r4, r5, r6, r7, lr}
 	add r5, r0, #0
 	bl sub_0205C6CC
@@ -503,7 +503,7 @@ _0205CF38:
 _0205CF40:
 	pop {r3, r4, r5, r6, r7, pc}
 	.balign 4, 0
-	thumb_func_end sub_0205CE68
+	thumb_func_end PlayerAvatar_UpdateMovement
 
 	thumb_func_start sub_0205CF44
 sub_0205CF44: ; 0x0205CF44
@@ -888,7 +888,7 @@ sub_0205D240: ; 0x0205D240
 	add r6, r0, #0
 	add r0, r4, #0
 	add r1, sp, #0xc
-	bl MapObject_GetPositionVec
+	bl MapObject_CopyPositionVector
 	add r4, sp, #0xc
 	add r3, sp, #0
 	ldmia r4!, {r0, r1}
@@ -996,10 +996,10 @@ _0205D2FC:
 	cmp r0, #0
 	beq _0205D33C
 	add r0, r4, #0
-	bl MapObject_GetPrevX
+	bl MapObject_GetPreviousX
 	add r6, r0, #0
 	add r0, r4, #0
-	bl MapObject_GetPrevY
+	bl MapObject_GetPreviousZ
 	add r5, #0xe4
 	add r2, r0, #0
 	add r0, r7, #0
@@ -1260,7 +1260,7 @@ _0205D4DE:
 	bl GetDeltaXByFacingDirection
 	str r0, [sp, #0xc]
 	add r0, r5, #0
-	bl MapObject_GetCurrentY
+	bl MapObject_GetCurrentZ
 	str r0, [sp, #0x10]
 	add r0, r7, #0
 	bl GetDeltaYByFacingDirection
@@ -1361,10 +1361,10 @@ _0205D5CE:
 	bl MapObject_GetFieldSystem
 	add r4, r0, #0
 	add r0, r5, #0
-	bl MapObject_GetPrevX
+	bl MapObject_GetPreviousX
 	add r6, r0, #0
 	add r0, r5, #0
-	bl MapObject_GetPrevY
+	bl MapObject_GetPreviousZ
 	add r4, #0xe4
 	add r2, r0, #0
 	add r0, r7, #0
@@ -1992,17 +1992,17 @@ sub_0205DAA8: ; 0x0205DAA8
 	bl GetDeltaXByFacingDirection
 	str r0, [sp, #0x14]
 	add r0, r5, #0
-	bl MapObject_GetCurrentHeight
+	bl MapObject_GetCurrentY
 	str r0, [sp, #8]
 	add r0, r5, #0
-	bl MapObject_GetCurrentY
+	bl MapObject_GetCurrentZ
 	str r0, [sp, #0xc]
 	ldr r0, [sp, #4]
 	bl GetDeltaYByFacingDirection
 	str r0, [sp, #0x10]
 	add r0, r5, #0
 	add r1, sp, #0x1c
-	bl MapObject_GetPositionVec
+	bl MapObject_CopyPositionVector
 	ldr r1, [sp, #0x14]
 	ldr r6, [sp, #0xc]
 	ldr r3, [sp, #0x10]
@@ -2091,7 +2091,7 @@ sub_0205DB68: ; 0x0205DB68
 	bl GetDeltaXByFacingDirection
 	add r7, r0, #0
 	add r0, r5, #0
-	bl MapObject_GetCurrentY
+	bl MapObject_GetCurrentZ
 	add r5, r0, #0
 	add r0, r4, #0
 	bl GetDeltaYByFacingDirection
@@ -2158,7 +2158,7 @@ sub_0205DBF4: ; 0x0205DBF4
 	bl MapObject_GetCurrentX
 	add r6, r0, #0
 	add r0, r5, #0
-	bl MapObject_GetCurrentY
+	bl MapObject_GetCurrentZ
 	str r0, [sp]
 	ldr r2, [sp]
 	add r0, r7, #0
@@ -2247,7 +2247,7 @@ sub_0205DCA0: ; 0x0205DCA0
 	bl GetDeltaXByFacingDirection
 	add r7, r0, #0
 	add r0, r5, #0
-	bl MapObject_GetCurrentY
+	bl MapObject_GetCurrentZ
 	str r0, [sp, #4]
 	add r0, r4, #0
 	bl GetDeltaYByFacingDirection
@@ -2294,7 +2294,7 @@ sub_0205DCFC: ; 0x0205DCFC
 	bl GetDeltaXByFacingDirection
 	add r7, r0, #0
 	add r0, r5, #0
-	bl MapObject_GetCurrentY
+	bl MapObject_GetCurrentZ
 	str r0, [sp, #4]
 	add r0, r4, #0
 	bl GetDeltaYByFacingDirection
@@ -2725,7 +2725,7 @@ sub_0205DFFC: ; 0x0205DFFC
 	add r0, r4, r0
 	str r0, [r6]
 	ldr r0, [sp]
-	bl GetPlayerYCoord
+	bl GetPlayerZCoord
 	add r4, r0, #0
 	add r0, r5, #0
 	bl GetDeltaYByFacingDirection

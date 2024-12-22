@@ -27,7 +27,7 @@
 .public PlayerAvatar_GetFacingDirection
 .public PlayerAvatar_GetNextFacing
 .public GetPlayerXCoord
-.public GetPlayerYCoord
+.public GetPlayerZCoord
 .public sub_0205C6C8
 .public sub_0205C6CC
 .public sub_0205C6D0
@@ -61,9 +61,9 @@
 .public sub_0205CB00
 .public sub_0205CB14
 .public sub_0205CB2C
-.public sub_0205CB48
+.public PlayerAvatar_MoveControl
 .public sub_0205CBE4
-.public sub_0205CE68
+.public PlayerAvatar_UpdateMovement
 .public sub_0205CF44
 .public sub_0205CF60
 .public sub_0205CFBC
@@ -87,12 +87,12 @@
 .public MapObject_GetMovementCommand
 .public sub_0205F504
 .public MapObject_GetFieldSystem
-.public MapObject_GetPrevX
-.public MapObject_GetPrevY
+.public MapObject_GetPreviousX
+.public MapObject_GetPreviousZ
 .public MapObject_GetCurrentX
-.public MapObject_GetCurrentHeight
 .public MapObject_GetCurrentY
-.public MapObject_GetPositionVec
+.public MapObject_GetCurrentZ
+.public MapObject_CopyPositionVector
 .public sub_02060BFC
 .public sub_02060D94
 .public sub_02060DEC
