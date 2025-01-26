@@ -101,26 +101,26 @@ void sub_02055CD8(FieldSystem *fieldSystem, int mapID, int warpID, int x, int y,
         if (MapHeader_IsCave(mapID)) {
             var = 6;
         } else {
-            if (sub_0203B5AC(mapID)) {
+            if (MapHeader_IsOutdoors(mapID)) {
                 var = 5;
-            } else if (sub_0203B58C(mapID)) {
+            } else if (MapHeader_IsInBuilding(mapID)) {
                 var = 6;
             } else {
                 GF_ASSERT(FALSE);
             }
         }
     } else {
-        if (sub_0203B5AC(otherID)) {
+        if (MapHeader_IsOutdoors(otherID)) {
             if (MapHeader_IsCave(mapID)) {
                 var = 4;
-            } else if (sub_0203B58C(mapID)) {
+            } else if (MapHeader_IsInBuilding(mapID)) {
                 var = 6;
             } else {
                 GF_ASSERT(FALSE);
             }
-        } else if (sub_0203B58C(otherID)) {
-            if (!sub_0203B5AC(mapID)) {
-                if (sub_0203B58C(mapID)) {
+        } else if (MapHeader_IsInBuilding(otherID)) {
+            if (!MapHeader_IsOutdoors(mapID)) {
+                if (MapHeader_IsInBuilding(mapID)) {
                     var = 6;
                 } else if (!MapHeader_IsCave(mapID)) {
                     GF_ASSERT(FALSE);
@@ -202,11 +202,11 @@ BOOL sub_02055DBC(TaskManager *man) {
                     TIMEOFDAY time = GF_RTC_GetTimeOfDay();
                     MapPreviewGraphic_BeginShowImage(man, index, time, parity); // this should set the specific map icon based on time?
                     env->state++;
-                    ov01_021EFAF8(fieldSystem); //<= this func specifically gets and displays the area's icon and text
+                    FieldSystem_DrawMapNameAnimation(fieldSystem);
                     break;
                 }
             }
-            ov01_021EFAF8(fieldSystem);
+            FieldSystem_DrawMapNameAnimation(fieldSystem);
             env->transitionState = 0;
             TaskManager_Call(man, sMapEnterRoutines[env->transitionNo], env);
             LocalMapObject *followerMon = FollowMon_GetMapObject(fieldSystem);
