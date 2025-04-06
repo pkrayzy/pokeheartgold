@@ -86,7 +86,7 @@ BOOL Field_AppExit(OVY_MANAGER *man, int *unused) {
 
 extern OVY_MGR_TEMPLATE ov01_02206378;
 
-void sub_0203DEF0(FieldSystem *fieldSystem) {
+void FieldSystem_LoadFieldOverlayInternal(FieldSystem *fieldSystem) {
     GF_ASSERT(fieldSystem->unk0->unk4 == NULL);
     GF_ASSERT(fieldSystem->unk0->unk0 == NULL);
 
@@ -212,7 +212,7 @@ void FieldSystem_Control(FieldSystem *fieldSystem) {
 
     int loadType = fieldSystem->unk70;
 
-    if (fieldSystem->location->mapId == MAP_D31R0201) {
+    if (fieldSystem->location->mapId == MAP_BATTLE_TOWER) {
         loadType = 0;
     }
 

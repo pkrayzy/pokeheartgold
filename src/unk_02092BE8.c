@@ -47,7 +47,7 @@ static void sub_02092BE8(FieldSystem *sys, PokegearArgs *ptr, BOOL a2) {
         ptr->y = warpPtr->y;
         MapHeader_GetWorldMapCoords(ptr->mapID, &Unk_struct.x, &Unk_struct.y);
         MAPMATRIX *matrix = MapMatrix_New();
-        MapMatrix_Load(MAP_T20, matrix);
+        MapMatrix_Load(MAP_NEW_BARK, matrix);
         if (Unk_struct.x == 0 && Unk_struct.y == 0) {
             ptr->matrixXCoord = ptr->x / 32;
             ptr->matrixYCoord = ptr->y / 32;
@@ -59,7 +59,7 @@ static void sub_02092BE8(FieldSystem *sys, PokegearArgs *ptr, BOOL a2) {
         MapMatrix_Free(matrix);
     }
 
-    ptr->playerGender = PlayerProfile_GetTrainerGender(Save_PlayerData_GetProfileAddr(FieldSystem_GetSaveData(sys)));
+    ptr->playerGender = PlayerProfile_GetTrainerGender(Save_PlayerData_GetProfile(FieldSystem_GetSaveData(sys)));
     ptr->menuInputStatePtr = &sys->menuInputState;
     ptr->unk01 = sub_0203DF3C(sys);
     ptr->mapMusicID = FieldSystem_GetOverriddenMusicId(sys, ptr->mapID);

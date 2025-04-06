@@ -238,6 +238,7 @@ Static main
     Object asm/unk_0206793C.o
     Object asm/unk_02067A60.o
     Object src/field_move.o
+    Object src/field_move_environment.o
     Object asm/unk_020689C8.o
     Object src/gymmick_init.o
     Object src/unk_02068F84.o
@@ -410,6 +411,47 @@ Static main
     Object lib/NitroSDK/asm/mi_compress.o
     Object lib/NitroSDK/asm/mi_init.o
     Object lib/asm/nitro.o
+    Object lib/MSL_C/asm/MSL_ARM_abort_exit.o
+    Object lib/MSL_c/asm/MSL_ARM_critical_regions_NITRO.o
+    Object lib/MSL_C/asm/MSL_ARM_math.o
+    Object lib/MSL_C/asm/MSL_Common_alloc.o
+    Object lib/MSL_C/asm/MSL_Common_ansi_files.o
+    Object lib/MSL_C/src/arith.o
+    Object lib/MSL_C/asm/MSL_Common_assert.o
+    Object lib/MSL_C/asm/MSL_Common_buffer_io.o
+    Object lib/MSL_C/asm/MSL_Common_ctype.o
+    Object lib/MSL_C/asm/MSL_Common_direct_io.o
+    Object lib/MSL_C/asm/MSL_Common_errno.o
+    Object lib/MSL_C/asm/MSL_Common_file_io.o
+    Object lib/MSL_C/asm/MSL_Common_file_pos.o
+    Object lib/MSL_C/asm/MSL_Common_float.o
+    Object lib/MSL_C/asm/MSL_Common_mbstring.o
+    Object lib/MSL_C/asm/MSL_Common_mem.o
+    Object lib/MSL_C/asm/MSL_Common_mem_funcs.o
+    Object lib/MSL_C/asm/MSL_Common_printf.o
+    Object lib/MSL_C/asm/MSL_Common_qsort.o
+    Object lib/MSL_C/src/rand.o
+    Object lib/MSL_C/asm/MSL_Common_scanf.o
+    Object lib/MSL_C/asm/MSL_Common_signal.o
+    Object lib/MSL_C/asm/MSL_Common_string.o
+    Object lib/MSL_C/asm/MSL_Common_strtold.o
+    Object lib/MSL_C/asm/MSL_Common_strtoul.o
+    Object lib/MSL_C/asm/MSL_Common_wchar_io.o
+    Object lib/MSL_C/asm/MSL_Common_wctype.o
+    Object lib/MSL_C/asm/MSL_Common_wmem.o
+    Object lib/MSL_C/asm/MSL_Common_wprintf.o
+    Object lib/MSL_C/asm/MSL_Common_wstring.o
+    Object lib/MSL_C/asm/MSL_DPMath_e_pow.o
+    Object lib/MSL_C/asm/MSL_DPMath_s_copysign.o
+    Object lib/MSL_C/asm/MSL_DPMath_s_fabs.o
+    Object lib/MSL_C/asm/MSL_DPMath_s_frexp.o
+    Object lib/MSL_C/asm/MSL_DPMath_s_ldexp.o
+    Object lib/MSL_C/asm/MSL_DPMath_w_pow.o
+    Object lib/MSL_C/asm/MSL_fp_ansi.o
+    Object lib/MSL_C/asm/MSL_math.o
+    Object lib/MSL_C/asm/MSL_ARM_pool_alloc_NITRO.o
+    Object lib/MSL_C/asm/MSL_string_extras.o
+    Object lib/MSL_C/asm/MSL_CPP_NITRO_Ai_LE.o
     Object lib/asm/msl.o
 }
 
@@ -920,6 +962,7 @@ Overlay OVY_73
 Overlay OVY_74
 {
     After OVY_38
+    Object src/application/main_menu/main_menu.o
     Object asm/overlay_74_thumb.o
     Object asm/nitrocrypto.o
 }

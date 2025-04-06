@@ -41,7 +41,7 @@ _021F3F84:
 _021F3F86:
 	str r0, [r5]
 	add r0, r4, #0
-	bl Save_PlayerData_GetProfileAddr
+	bl Save_PlayerData_GetProfile
 	str r0, [r5, #8]
 	add r0, r4, #0
 	bl Save_PlayerData_GetIGTAddr
@@ -652,9 +652,9 @@ _021F444C:
 	ldr r1, [r1]
 	cmp r1, #MAP_UNION
 	beq _021F4460
-	cmp r1, #MAP_DIRECT2
+	cmp r1, #MAP_WIFI_SINGLE_BATTLE_AREA
 	beq _021F4460
-	cmp r1, #MAP_DIRECT4
+	cmp r1, #MAP_WIFI_MULTI_BATTLE_AREA
 	beq _021F4460
 	bl ov01_021F4404
 _021F4460:
