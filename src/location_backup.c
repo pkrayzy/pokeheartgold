@@ -7,8 +7,24 @@
 #include "field_system.h"
 #include "save_local_field_data.h"
 
+// static const Location sLocation_PlayerRoom = {
+//     .mapId = MAP_NEW_BARK_PLAYER_HOUSE_2F,
+//     .warpId = 0xFFFFFFFF,
+//     .x = 0x00000006,
+//     .y = 0x00000006,
+//     .direction = 0x00000001,
+// };
+
+// static const Location sLocation_OutsidePlayerHome = {
+//     .mapId = MAP_NEW_BARK,
+//     .warpId = 0xFFFFFFFF,
+//     .x = 0x000002B7,
+//     .y = 0x0000018D,
+//     .direction = 0x00000001,
+// };
+
 static const Location sLocation_PlayerRoom = {
-    .mapId = MAP_NEW_BARK_PLAYER_HOUSE_2F,
+    .mapId = MAP_PALLET_TOWN_REDS_HOUSE_2F,
     .warpId = 0xFFFFFFFF,
     .x = 0x00000006,
     .y = 0x00000006,
@@ -16,10 +32,10 @@ static const Location sLocation_PlayerRoom = {
 };
 
 static const Location sLocation_OutsidePlayerHome = {
-    .mapId = MAP_NEW_BARK,
+    .mapId = MAP_PALLET,
     .warpId = 0xFFFFFFFF,
-    .x = 0x000002B7,
-    .y = 0x0000018D,
+    .x = 0x0000040A,
+    .y = 0x0000016C,
     .direction = 0x00000001,
 };
 
