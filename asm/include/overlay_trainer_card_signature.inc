@@ -6,7 +6,7 @@
 .public FontID_Release
 .public FontID_String_GetWidth
 .public LoadFontPal1
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public PlaySE
 .public IsSEPlaying
 .public OverlayManager_CreateAndGetData
@@ -57,7 +57,7 @@
 .public SetKeyRepeatTimers
 .public CreateHeap
 .public DestroyHeap
-.public FreeToHeap
+.public Heap_Free
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
 .public InitBgFromTemplate

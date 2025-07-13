@@ -18,7 +18,7 @@
 .public ZeroPalettesByBitmask
 .public PaletteData_FillPaletteInBuffer
 .public sub_02004B10
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public GF_SndHandleSetPlayerVolume
 .public PlaySE
 .public PlayCry
@@ -156,7 +156,7 @@
 .public DestroyHeap
 .public AllocFromHeap
 .public AllocFromHeapAtEnd
-.public FreeToHeap
+.public Heap_Free
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
 .public SetScreenModeAndDisable

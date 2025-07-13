@@ -20,13 +20,13 @@
 #include "save_vars_flags.h"
 #include "sound_02004A44.h"
 #include "sprite.h"
+#include "sprite_system.h"
 #include "sys_flags.h"
 #include "system.h"
 #include "text.h"
 #include "touchscreen.h"
 #include "unk_02005D10.h"
 #include "unk_0200B150.h"
-#include "sprite_system.h"
 #include "unk_0200FA24.h"
 #include "unk_020210A0.h"
 #include "vram_transfer_manager.h"
@@ -563,7 +563,7 @@ static const u16 sResdatInfo[7] = {
     NARC_resdat_resdat_00000074_bin,
 };
 
-static const UnkStruct_0200D2B4 sSpriteTemplates[3] = {
+static const UnmanagedSpriteTemplate sSpriteTemplates[3] = {
     // Drop cursor
     { ALPH_SPRITE_RES_CURSORS,     208, 168, 0, 0, 3, 0, NNS_G2D_VRAM_TYPE_2DMAIN, 1, 0, 0, 0 },
     // Origin cursor
@@ -578,7 +578,7 @@ static const u32 sQuitButtonTextColors[3] = {
     MAKE_TEXT_COLOR(5, 6, 0),
 };
 
-BOOL AlphPuzzle_Init(OVY_MANAGER *man, int *state) {
+BOOL AlphPuzzle_Init(OverlayManager *man, int *state) {
     switch (*state) {
     case 0:
         AlphPuzzle_ScreenOff();
@@ -587,7 +587,7 @@ BOOL AlphPuzzle_Init(OVY_MANAGER *man, int *state) {
         MI_CpuFill8(data, 0, sizeof(AlphPuzzleData));
         data->heapId = HEAP_ID_ALPH_PUZZLE;
         data->args = OverlayManager_GetArgs(man);
-        sub_02004EC4(74, 0, 0);
+        Sound_SetSceneAndPlayBGM(74, 0, 0);
         AlphPuzzle_InitTextOptionsAndPuzzleIndex(data);
         (*state)++;
         break;
@@ -600,7 +600,7 @@ BOOL AlphPuzzle_Init(OVY_MANAGER *man, int *state) {
     return FALSE;
 }
 
-BOOL AlphPuzzle_Main(OVY_MANAGER *man, int *state) {
+BOOL AlphPuzzle_Main(OverlayManager *man, int *state) {
     AlphPuzzleData *data = OverlayManager_GetData(man);
     switch (*state) {
     case ALPH_PUZZLE_STATE_FADE_IN:
@@ -634,7 +634,7 @@ BOOL AlphPuzzle_Main(OVY_MANAGER *man, int *state) {
     return FALSE;
 }
 
-BOOL AlphPuzzle_Exit(OVY_MANAGER *man, int *state) {
+BOOL AlphPuzzle_Exit(OverlayManager *man, int *state) {
     AlphPuzzleData *data = OverlayManager_GetData(man);
     if (!AlphPuzzle_OverlayExitStep(data)) {
         return FALSE;
@@ -1113,7 +1113,7 @@ static void AlphPuzzle_FreeBackgroundBuffers(AlphPuzzleData *data) {
     FreeBgTilemapBuffer(data->bgConfig, 7);
     FreeBgTilemapBuffer(data->bgConfig, 6);
     FreeBgTilemapBuffer(data->bgConfig, 4);
-    FreeToHeap(data->bgConfig);
+    Heap_Free(data->bgConfig);
 
     GX_SetDispSelect(GX_DISP_SELECT_MAIN_SUB);
 }
@@ -1149,7 +1149,7 @@ static void AlphPuzzle_LoadBackgroundGraphics(AlphPuzzleData *data) {
 }
 
 static void AlphPuzzle_FreeBackgroundGraphics(AlphPuzzleData *data) {
-    FreeToHeap(data->screenDataAlloc);
+    Heap_Free(data->screenDataAlloc);
     PaletteData_FreeBuffers(data->palette, PLTTBUF_MAIN_OBJ);
     PaletteData_FreeBuffers(data->palette, PLTTBUF_SUB_BG);
     PaletteData_FreeBuffers(data->palette, PLTTBUF_MAIN_BG);
@@ -1423,7 +1423,7 @@ static void Task_AlphPuzzle_WaitDropCursorAnimOnQuit(SysTask *task, void *_data)
         AlphPuzzle_ToggleDropCursorSprite(data->data, 0);
         data->data->quitTaskActive = 0;
         MI_CpuFill8(data, 0, sizeof(AlphPuzzleQuitTaskData));
-        FreeToHeap(data);
+        Heap_Free(data);
         SysTask_Destroy(task);
     }
 }

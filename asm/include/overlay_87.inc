@@ -10,7 +10,7 @@
 .public PaletteData_AllocBuffers
 .public PaletteData_FreeBuffers
 .public PaletteData_PushTransparentBuffers
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public PlaySE
 .public StopSE
 .public IsSEPlaying
@@ -71,7 +71,7 @@
 .public CreateHeap
 .public DestroyHeap
 .public AllocFromHeap
-.public FreeToHeap
+.public Heap_Free
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
 .public InitBgFromTemplate

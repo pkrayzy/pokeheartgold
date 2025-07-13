@@ -14,7 +14,7 @@
 .public FontID_String_GetWidthMultiline
 .public FontID_String_GetCenterAlignmentX
 .public sub_02004AD8
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public sub_02005AF8
 .public Sound_Stop
 .public PlaySE
@@ -102,8 +102,8 @@
 .public DestroyHeap
 .public AllocFromHeap
 .public AllocFromHeapAtEnd
-.public FreeToHeap
-.public FreeToHeapExplicit
+.public Heap_Free
+.public Heap_FreeExplicit
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
 .public InitBgFromTemplate

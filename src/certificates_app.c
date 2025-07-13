@@ -117,7 +117,7 @@ static const GraphicsBanks ov78_021E6858 = {
     .texpltt = GX_VRAM_TEXPLTT_NONE,
 };
 
-static const UnkTemplate_0200D748 ov78_021E68B4 = {
+static const ManagedSpriteTemplate ov78_021E68B4 = {
     .x = 0,
     .y = 0,
     .z = 0,
@@ -130,7 +130,7 @@ static const UnkTemplate_0200D748 ov78_021E68B4 = {
     .vramTransfer = 0,
 };
 
-static const UnkTemplate_0200D748 ov78_021E6880 = {
+static const ManagedSpriteTemplate ov78_021E6880 = {
     .x = 0,
     .y = 0,
     .z = 0,
@@ -143,7 +143,7 @@ static const UnkTemplate_0200D748 ov78_021E6880 = {
     .vramTransfer = 0,
 };
 
-static const UnkTemplate_0200D748 ov78_021E68E8 = {
+static const ManagedSpriteTemplate ov78_021E68E8 = {
     .x = 0,
     .y = 0,
     .z = 0,
@@ -184,7 +184,7 @@ static void ov78_021E6664(Sprite *sprite, PlayerProfile *profile, HeapID heapId)
 static u32 ov78_021E6688(int species, int form, int gender);
 static void ov78_021E66D4(Sprite *sprite, Pokemon *pokemon, HeapID heapId, u32 a3);
 
-BOOL Certificates_Init(OVY_MANAGER *manager, int *state) {
+BOOL Certificates_Init(OverlayManager *manager, int *state) {
     CreateHeap(HEAP_ID_3, HEAP_ID_CERTIFICATES, 0x20000);
 
     CertificatesApp_Data *data = OverlayManager_CreateAndGetData(manager, sizeof(CertificatesApp_Data), HEAP_ID_CERTIFICATES);
@@ -232,7 +232,7 @@ BOOL Certificates_Init(OVY_MANAGER *manager, int *state) {
     return TRUE;
 }
 
-BOOL Certificates_Main(OVY_MANAGER *manager, int *state) {
+BOOL Certificates_Main(OverlayManager *manager, int *state) {
     CertificatesApp_Data *data = OverlayManager_GetData(manager);
     BOOL ret = FALSE;
 
@@ -294,7 +294,7 @@ BOOL Certificates_Main(OVY_MANAGER *manager, int *state) {
     return ret;
 }
 
-BOOL Certificates_Exit(OVY_MANAGER *manager, int *state) {
+BOOL Certificates_Exit(OverlayManager *manager, int *state) {
     CertificatesApp_Data *data = OverlayManager_GetData(manager);
     HeapID heapId = data->heapId;
 
@@ -410,7 +410,7 @@ static void CertificatesApp_FreeBgConfig(CertificatesApp_Data *data) {
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_SUB_1);
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_SUB_3);
 
-    FreeToHeap(data->bgConfig);
+    Heap_Free(data->bgConfig);
 }
 
 static void CertificatesApp_SetupWindowsAndText(CertificatesApp_Data *data) {
@@ -564,7 +564,7 @@ static void ov78_021E6068(CertificatesApp_Data *data) {
 }
 
 static ManagedSprite *ov78_021E61C4(SpriteSystem *renderer, SpriteManager *gfxHandler, s16 x, s16 y, u8 animation, u8 spritePriority) {
-    UnkTemplate_0200D748 template = ov78_021E6880;
+    ManagedSpriteTemplate template = ov78_021E6880;
     template.x = x;
     template.y = y;
     template.spritePriority = spritePriority;
@@ -576,7 +576,7 @@ static ManagedSprite *ov78_021E61C4(SpriteSystem *renderer, SpriteManager *gfxHa
 }
 
 static ManagedSprite *ov78_021E6214(SpriteSystem *renderer, SpriteManager *gfxHandler, s16 x, s16 y) {
-    UnkTemplate_0200D748 template = ov78_021E68B4;
+    ManagedSpriteTemplate template = ov78_021E68B4;
     template.x = x;
     template.y = y;
 
@@ -584,7 +584,7 @@ static ManagedSprite *ov78_021E6214(SpriteSystem *renderer, SpriteManager *gfxHa
 }
 
 static ManagedSprite *ov78_021E6250(SpriteSystem *renderer, SpriteManager *gfxHandler, s16 x, s16 y) {
-    UnkTemplate_0200D748 template = ov78_021E68E8;
+    ManagedSpriteTemplate template = ov78_021E68E8;
     template.x = x;
     template.y = y;
 
@@ -695,7 +695,7 @@ void ov78_021E65BC(Sprite *sprite, s32 narcMemberNum, u8 a2, HeapID heapId) {
     void *buffer = AllocFromHeapAtEnd(heapId, 0x200);
     sub_020145B4(address + (a2 * 0x200), 4, 0, 0, 4, 4, buffer);
     ov78_021E656C(sprite, buffer, 0x200, 0);
-    FreeToHeap(buffer);
+    Heap_Free(buffer);
 
     Sprite_GetVramType(sprite);
     address = NNS_G3dGetPlttData(tex);
@@ -704,7 +704,7 @@ void ov78_021E65BC(Sprite *sprite, s32 narcMemberNum, u8 a2, HeapID heapId) {
     GX_LoadOBJPltt(address, 0x40, 0x20);
     GXS_LoadOBJPltt(address, 0x40, 0x20);
 
-    FreeToHeap(header);
+    Heap_Free(header);
     NARC_Delete(narc);
 
     thunk_Sprite_SetDrawFlag(sprite, TRUE);
@@ -763,7 +763,7 @@ static void ov78_021E66D4(Sprite *sprite, Pokemon *pokemon, HeapID heapId, u32 a
     void *buffer = AllocFromHeapAtEnd(heapId, bufferSize);
     sub_020145B4(address + (bufferSize * 2), unk, 0, 0, unk, unk, buffer);
     ov78_021E656C(sprite, buffer, bufferSize, 0);
-    FreeToHeap(buffer);
+    Heap_Free(buffer);
     Sprite_GetVramType(sprite);
     void *pointer = (void *)tex + tex->plttInfo.ofsPlttData;
     if (shiny) {
@@ -775,7 +775,7 @@ static void ov78_021E66D4(Sprite *sprite, Pokemon *pokemon, HeapID heapId, u32 a
     GX_LoadOBJPltt(pointer, 0x60, 0x20);
     GXS_LoadOBJPltt(pointer, 0x60, 0x20);
 
-    FreeToHeap(header);
+    Heap_Free(header);
     NARC_Delete(narc);
 
     thunk_Sprite_SetDrawFlag(sprite, TRUE);

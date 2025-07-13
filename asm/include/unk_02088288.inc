@@ -5,7 +5,7 @@
 .public FontID_SetAccessLazy
 .public FontID_Release
 .public LoadFontPal1
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public PlaySE
 .public sub_020062E0
 .public sub_02006EA0
@@ -50,8 +50,8 @@
 .public SetKeyRepeatTimers
 .public CreateHeap
 .public DestroyHeap
-.public FreeToHeap
-.public FreeToHeapExplicit
+.public Heap_Free
+.public Heap_FreeExplicit
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
 .public InitBgFromTemplate

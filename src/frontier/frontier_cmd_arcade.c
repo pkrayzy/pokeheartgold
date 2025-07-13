@@ -49,7 +49,7 @@ BOOL FrtCmd_ArcadeFree(FrontierContext *ctx) {
     return FALSE;
 }
 
-extern OVY_MGR_TEMPLATE gOverlayTemplate_BattleArcadeGameBoard;
+extern OverlayManagerTemplate gOverlayTemplate_BattleArcadeGameBoard;
 
 BOOL FrtCmd_LaunchGameBoard(FrontierContext *ctx) {
     FrontierLaunchParam *param = Frontier_GetLaunchParam(ctx->frontierSystem->unk0);
@@ -178,7 +178,7 @@ static void GameBoardArgs_Set(GAME_BOARD_ARGS *args, ArcadeContext *data) {
 static void ov80_02233A1C(void *data) {
     GAME_BOARD_ARGS *args = data;
     ov80_02234550(args->work, args);
-    FreeToHeap(args);
+    Heap_Free(args);
 }
 
 BOOL FrtCmd_ArcadeSetPartyBeforeBattle(FrontierContext *ctx) {

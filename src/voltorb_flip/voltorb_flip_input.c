@@ -8,10 +8,10 @@
 #include "voltorb_flip/voltorb_flip_data.h"
 
 #include "heap.h"
+#include "sprite_system.h"
 #include "system.h"
 #include "touchscreen.h"
 #include "unk_02005D10.h"
-#include "sprite_system.h"
 #include "unk_020192D0.h"
 #include "unk_02020654.h"
 
@@ -47,7 +47,7 @@ Ov122_021E8CFC *ov122_021E8CFC(HeapID heapId, struct ManagedSprite *a1, struct M
 void ov122_021E8D58(Ov122_021E8CFC *a0) {
     GF_ASSERT(a0->unk8 != 0);
     sub_02019BDC(a0->unk8);
-    FreeToHeap(a0);
+    Heap_Free(a0);
 }
 
 int ov122_021E8D74(Ov122_021E8CFC *a0) {

@@ -7,7 +7,7 @@
 .public LoadFontPal0
 .public LoadFontPal1
 .public BlendPalette
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public PlaySE
 .public StopSE
 .public OverlayManager_CreateAndGetData
@@ -78,7 +78,7 @@
 .public DestroyHeap
 .public AllocFromHeap
 .public AllocFromHeapAtEnd
-.public FreeToHeap
+.public Heap_Free
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
 .public InitBgFromTemplate

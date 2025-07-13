@@ -44,7 +44,7 @@
 .public CreateHeap
 .public DestroyHeap
 .public AllocFromHeapAtEnd
-.public FreeToHeap
+.public Heap_Free
 .public InitBgFromTemplate
 .public FreeBgTilemapBuffer
 .public BG_LoadScreenTilemapData
@@ -132,7 +132,7 @@
 .public Bag_GetRegisteredItem2
 .public Save_Bag_Get
 .public FieldSystem_GetGearPhoneRingManager
-.public sub_02092E08
+.public GearPhoneRingManager_IsRinging
 .public GXS_SetGraphicsMode
 .public GX_SetBankForSubBG
 .public GX_SetBankForSubOBJ

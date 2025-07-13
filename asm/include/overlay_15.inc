@@ -6,7 +6,7 @@
 .public FontID_String_GetWidth
 .public LoadFontPal1
 .public sub_02004B10
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public SoundSys_GetGBSoundsState
 .public SoundSys_ToggleGBSounds
 .public PlaySE
@@ -88,8 +88,8 @@
 .public SetKeyRepeatTimers
 .public CreateHeap
 .public DestroyHeap
-.public FreeToHeap
-.public FreeToHeapExplicit
+.public Heap_Free
+.public Heap_FreeExplicit
 .public GF_ExpHeap_FndInitAllocator
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable

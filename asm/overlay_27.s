@@ -1856,7 +1856,7 @@ _0225AD52:
 	mov r2, #0x40
 	bl MIi_CpuCopyFast
 	add r0, r4, #0
-	bl FreeToHeap
+	bl Heap_Free
 	add sp, #0x14
 	pop {r4, r5, r6, r7, pc}
 	.balign 4, 0
@@ -3801,7 +3801,7 @@ ov27_0225BDFC: ; 0x0225BDFC
 	sub sp, #0x14
 	add r5, r0, #0
 	ldr r0, [r5, #4]
-	bl sub_02092E08
+	bl GearPhoneRingManager_IsRinging
 	ldr r1, [r5, #0x1c]
 	cmp r1, #0
 	bne _0225BE8A
@@ -4727,7 +4727,7 @@ ov27_0225C4AC: ; 0x0225C4AC
 	mov r1, #6
 	bl ScheduleBgTilemapBufferTransfer
 	add r0, r6, #0
-	bl FreeToHeap
+	bl Heap_Free
 	add r0, r4, #0
 	bl NARC_Delete
 	add sp, #0x14

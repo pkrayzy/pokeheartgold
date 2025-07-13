@@ -24,12 +24,12 @@
 #include "pokemon.h"
 #include "pokepic.h"
 #include "sound_02004A44.h"
+#include "sprite_system.h"
 #include "sys_task_api.h"
 #include "system.h"
 #include "text.h"
 #include "touchscreen.h"
 #include "unk_02005D10.h"
-#include "sprite_system.h"
 #include "unk_0200FA24.h"
 #include "unk_02013FDC.h"
 #include "unk_02026E84.h"
@@ -184,7 +184,7 @@ struct RegisterHallOfFameData {
     String *strbuf2;
     NARC *narcA101;
     NARC *narcA180;
-    SpriteSystem *spriteRenderer;     // 0009C
+    SpriteSystem *spriteRenderer;    // 0009C
     SpriteManager *spriteGfxHandler; // 000A0
     ManagedSprite *monPics[15];
     Camera *camera;
@@ -795,7 +795,7 @@ static const RegHOFSpritePosScaleAnimParam sPicPosScaleAnimParams[27] = {
     { 128, 100, 128, 120, 1.0f, 0.8f  },
 };
 
-static const UnkTemplate_0200D748 sPicTemplates[21] = {
+static const ManagedSpriteTemplate sPicTemplates[21] = {
     [0] = {
            .x = 512,
            .y = 480,
@@ -835,7 +835,7 @@ static const UnkTemplate_0200D748 sPicTemplates[21] = {
     [20] = { .x = 0,   .y = 0,   .z = 0, .animation = 0, .spritePriority = 0,  .pal = 0, .vram = NNS_G2D_VRAM_TYPE_2DMAIN, .resIdList = { [GF_GFX_RES_TYPE_CHAR] = 55520, [GF_GFX_RES_TYPE_PLTT] = 55522, [GF_GFX_RES_TYPE_CELL] = 55515, [GF_GFX_RES_TYPE_ANIM] = 55515, [GF_GFX_RES_TYPE_MCEL] = -1, [GF_GFX_RES_TYPE_MANM] = -1 }, .bgPriority = 2, .vramTransfer = 0 }
 };
 
-BOOL RegisterHallOfFame_Init(OVY_MANAGER *man, int *state) {
+BOOL RegisterHallOfFame_Init(OverlayManager *man, int *state) {
     Main_SetVBlankIntrCB(NULL, NULL);
     HBlankInterruptDisable();
     GfGfx_EngineASetPlanes(GX_PLANEMASK_NONE);
@@ -857,14 +857,14 @@ BOOL RegisterHallOfFame_Init(OVY_MANAGER *man, int *state) {
     RegisterHallOfFame_SetGfxBanks();
     RegisterHallOfFame_CreateBgConfig(data);
     RegisterHallOfFame_CreateSpriteGfxHandlers(data);
-    sub_02004EC4(8, SEQ_GS_E_DENDOUIRI, 1);
-    sub_02004EC4(71, 0, 0);
+    Sound_SetSceneAndPlayBGM(8, SEQ_GS_E_DENDOUIRI, 1);
+    Sound_SetSceneAndPlayBGM(71, 0, 0);
     LoadFontPal0(GF_PAL_LOCATION_MAIN_BG, (enum GFPalSlotOffset)0x1E0, HEAP_ID_REGISTER_HALL_OF_FAME);
     data->currentScene = REGHOF_SCENE_INDIV_MONS_INIT;
     return TRUE;
 }
 
-BOOL RegisterHallOfFame_Exit(OVY_MANAGER *man, int *state) {
+BOOL RegisterHallOfFame_Exit(OverlayManager *man, int *state) {
     RegisterHallOfFameData *data = OverlayManager_GetData(man);
     RegisterHallOfFame_DestroySpriteGfxHandlers(data);
     RegisterHallOfFame_DestroyBgConfig(data);
@@ -881,7 +881,7 @@ BOOL RegisterHallOfFame_Exit(OVY_MANAGER *man, int *state) {
 
 static RegisterHallOfFameScene (*const sSceneFuncs[8])(RegisterHallOfFameData *data);
 
-BOOL RegisterHallOfFame_Main(OVY_MANAGER *man, int *state) {
+BOOL RegisterHallOfFame_Main(OverlayManager *man, int *state) {
     RegisterHallOfFameData *data = OverlayManager_GetData(man);
     data->currentScene = sSceneFuncs[data->currentScene](data);
     if (data->currentScene == REGHOF_SCENE_MAX) {
@@ -922,7 +922,7 @@ static void RegisterHallOfFame_CreateBgConfig(RegisterHallOfFameData *data) {
 }
 
 static void RegisterHallOfFame_DestroyBgConfig(RegisterHallOfFameData *data) {
-    FreeToHeap(data->bgConfig);
+    Heap_Free(data->bgConfig);
 }
 
 static void RegisterHallOfFame_CreateSpriteGfxHandlers(RegisterHallOfFameData *data) {
@@ -1356,7 +1356,7 @@ static void RegisterHallOfFame_IndivMonsScene_SetMon3dSpriteTex(RegisterHallOfFa
         sub_020145B4((const u8 *)texData + size * i, spriteSquareDim, 0, 0, spriteSquareDim, spriteSquareDim, buffer);
         RegisterHallOfFame_ReplaceSpriteChar(buffer, imageLoc + size * i, size);
     }
-    FreeToHeap(buffer);
+    Heap_Free(buffer);
 
     u32 plttLoc = NNS_G2dGetImagePaletteLocation(Sprite_GetPaletteProxy(data->monPics[picIdx]->sprite), NNS_G2D_VRAM_TYPE_2DMAIN);
     const void *loadPos = NNS_G3dGetPlttData(resTex);
@@ -1364,7 +1364,7 @@ static void RegisterHallOfFame_IndivMonsScene_SetMon3dSpriteTex(RegisterHallOfFa
         loadPos = (const u8 *)loadPos + 0x20;
     }
     RegisterHallOfFame_ReplaceSpritePltt(loadPos, plttLoc, 0x20);
-    FreeToHeap(fileData);
+    Heap_Free(fileData);
 }
 
 static void RegisterHallOfFame_IndivMons_InitBgLayers(RegisterHallOfFameData *data) {
@@ -2070,9 +2070,9 @@ static int RegisterHallOfFame_GetMmodelBySpeciesFormGender(int species, u8 form,
     int ret;
 
     if (species <= 0 || species > SPECIES_ARCEUS) {
-        ret = NARC_mmodel_mmodel_00000001_bin;
+        ret = NARC_mmodel_mmodel_00000001_NSBTX;
     } else {
-        ret = SpeciesToOverworldModelIndexOffset(species) + NARC_mmodel_mmodel_00000297_bin;
+        ret = SpeciesToOverworldModelIndexOffset(species) + NARC_mmodel_mmodel_00000297_NSBTX;
         if (OverworldModelLookupHasFemaleForm(species)) {
             if (gender == MON_FEMALE) {
                 ++ret;
@@ -2121,7 +2121,7 @@ static void Task_RegisterHallOfFame_IndivMonAnimAndCry(SysTask *task, void *task
     if (animStep >= 0) {
         RegisterHallOfFame_ReplaceSpriteChar(showPic->charbuf[animStep], showPic->imageLocation, 3200);
     } else {
-        FreeToHeap(showPic);
+        Heap_Free(showPic);
         SysTask_Destroy(task);
     }
 }
@@ -2397,7 +2397,7 @@ static void RegisterHallOfFame_WholePartyScene_CreateSprites(RegisterHallOfFameD
     r4 = AllocFromHeap(HEAP_ID_REGISTER_HALL_OF_FAME, 0x1900);
     sub_020143E0(sp2C.narcId, sp2C.ncbr_id, HEAP_ID_REGISTER_HALL_OF_FAME, &sp1C, r4);
     RegisterHallOfFame_ReplaceSpriteChar(r4, NNS_G2dGetImageLocation(Sprite_GetImageProxy(data->monPics[REGHOF_PIC_WHOLE_PLAYER]->sprite), NNS_G2D_VRAM_TYPE_2DMAIN), 3200);
-    FreeToHeap(r4);
+    Heap_Free(r4);
 
     GfGfxLoader_GXLoadPal(sp2C.narcId, sp2C.nclr_id, GF_PAL_LOCATION_MAIN_OBJ, (enum GFPalSlotOffset)NNS_G2dGetImagePaletteLocation(Sprite_GetPaletteProxy(data->monPics[REGHOF_PIC_WHOLE_PLAYER]->sprite), NNS_G2D_VRAM_TYPE_2DMAIN), 0x20, HEAP_ID_REGISTER_HALL_OF_FAME);
 
@@ -2586,9 +2586,9 @@ static void RegisterHallOfFame_DestroySpotlightsTask(SysTask *task) {
         RegisterHofSpotlightTaskData *spotlight = (RegisterHofSpotlightTaskData *)SysTask_GetData(task);
 
         for (int i = 0; i < spotlight->numSpotlights; ++i) {
-            FreeToHeap(SysTask_GetData(spotlight->childTasks[i]));
+            Heap_Free(SysTask_GetData(spotlight->childTasks[i]));
         }
-        FreeToHeap(spotlight);
+        Heap_Free(spotlight);
     }
 }
 
@@ -2639,7 +2639,7 @@ static SysTask *RegisterHallOfFame_CreateConfettiTask(RegisterHallOfFameData *da
 
 static void RegisterHallOfFame_EndConfetti(SysTask *task) {
     if (task != NULL) {
-        FreeToHeap(SysTask_GetData(task));
+        Heap_Free(SysTask_GetData(task));
         SysTask_Destroy(task);
     }
 }

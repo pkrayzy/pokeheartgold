@@ -18,10 +18,10 @@
 #include "render_window.h"
 #include "sound.h"
 #include "sprite.h"
+#include "sprite_system.h"
 #include "system.h"
 #include "touchscreen.h"
 #include "unk_02005D10.h"
-#include "sprite_system.h"
 #include "unk_0200FA24.h"
 #include "unk_0203A3B0.h"
 #include "vram_transfer_manager.h"
@@ -172,7 +172,7 @@ static const u32 ov54_021E6DA8[15][2] = {
     { MENU_ENTRY_6,            6 },
 };
 
-static const UnkStruct_0200D2B4 ov54_021E6EAC[9] = {
+static const UnmanagedSpriteTemplate ov54_021E6EAC[9] = {
     {
      .resourceSet = 0,
      .x = 112,
@@ -326,7 +326,7 @@ static void OptionsApp_SetupSprites(OptionsApp_Data *data);
 static void OptionsApp_SetActiveButtonsXPosition(OptionsApp_Data *data);
 static BOOL OptionsApp_ConfirmAndQuitButtonsAreDoneAnimating(OptionsApp_Data *data);
 
-BOOL OptionsMenu_Init(OVY_MANAGER *manager, int *state) {
+BOOL OptionsMenu_Init(OverlayManager *manager, int *state) {
     OptionsApp_Args *args = OverlayManager_GetArgs(manager);
     CreateHeap(HEAP_ID_3, HEAP_ID_OPTIONS_APP, 0x30000);
 
@@ -356,7 +356,7 @@ BOOL OptionsMenu_Init(OVY_MANAGER *manager, int *state) {
     return TRUE;
 }
 
-BOOL OptionsMenu_Exit(OVY_MANAGER *manager, int *state) {
+BOOL OptionsMenu_Exit(OverlayManager *manager, int *state) {
     OptionsApp_Data *data = OverlayManager_GetData(manager);
 
     if (data->unk10_0 == 1) {
@@ -390,7 +390,7 @@ BOOL OptionsMenu_Exit(OVY_MANAGER *manager, int *state) {
     return TRUE;
 }
 
-BOOL OptionsMenu_Main(OVY_MANAGER *manager, int *state) {
+BOOL OptionsMenu_Main(OverlayManager *manager, int *state) {
     OptionsApp_Data *data = OverlayManager_GetData(manager);
     switch (data->exitState) {
     case 0:
@@ -645,7 +645,7 @@ static void OptionsApp_FreeBgConfig(OptionsApp_Data *data) {
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_MAIN_2);
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_MAIN_1);
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_MAIN_0);
-    FreeToHeap(data->bgConfig);
+    Heap_Free(data->bgConfig);
 }
 
 static void OptionsApp_SetupGraphicsData(OptionsApp_Data *data) {

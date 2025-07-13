@@ -831,7 +831,7 @@ _02237E36:
 	mov r1, #0
 	mov r0, #0x34
 	add r2, r1, #0
-	bl sub_02004EC4
+	bl Sound_SetSceneAndPlayBGM
 	ldr r1, _02237F90 ; =0x00020020
 	mov r0, #0x43
 	bl AllocFromHeap
@@ -847,7 +847,7 @@ _02237E36:
 	ldr r1, _02237F94 ; =0x0000047D
 	mov r0, #0xb
 	mov r2, #1
-	bl sub_02004EC4
+	bl Sound_SetSceneAndPlayBGM
 	mov r0, #1
 	bl TextFlags_SetCanTouchSpeedUpPrint
 	ldr r2, _02237F98 ; =0x04000304
@@ -1009,7 +1009,7 @@ _02238086:
 	mov r0, #4
 	bl FontID_Release
 	ldr r0, [r4, #0x24]
-	bl FreeToHeap
+	bl Heap_Free
 	bl UnloadOVY38
 	bl UnloadDwcOverlay
 	add r0, r4, #0
@@ -1031,7 +1031,7 @@ _02238086:
 	bl ov72_02238160
 	bl sub_02034DE0
 	ldr r0, [r4, #4]
-	bl FreeToHeap
+	bl Heap_Free
 	add r0, r5, #0
 	bl OverlayManager_FreeData
 	mov r0, #0
@@ -2518,7 +2518,7 @@ ov72_02238BEC: ; 0x02238BEC
 	mov r2, #0x80
 	bl MIi_CpuCopy16
 	add r0, r4, #0
-	bl FreeToHeap
+	bl Heap_Free
 	mov r0, #0
 	str r0, [sp, #0x24]
 	str r0, [sp, #0x28]
@@ -7292,7 +7292,7 @@ _0223B178:
 	ldr r0, [r4]
 	bl BgCommitTilemapBufferToVram
 	ldr r0, [sp, #0x10]
-	bl FreeToHeap
+	bl Heap_Free
 	ldr r0, [sp, #0x14]
 	bl NARC_Delete
 	add r0, r4, #0

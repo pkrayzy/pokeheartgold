@@ -21,7 +21,7 @@
 .public PaletteData_LoadNarc
 .public PaletteData_FillPaletteInBuffer
 .public PaletteData_BlendPalette
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public PlaySE
 .public NARC_New
 .public NARC_Delete
@@ -83,7 +83,7 @@
 .public sub_0201A748
 .public sub_0201A774
 .public AllocFromHeap
-.public FreeToHeap
+.public Heap_Free
 .public ToggleBgLayer
 .public BgSetPosTextAndCommit
 .public BG_ClearCharDataRange

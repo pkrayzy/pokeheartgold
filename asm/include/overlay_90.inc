@@ -6,7 +6,7 @@
 .public FontID_Release
 .public FontID_String_GetWidth
 .public LoadFontPal1
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public PlaySE
 .public PlayFanfare
 .public IsFanfarePlaying
@@ -75,7 +75,7 @@
 .public HBlankInterruptDisable
 .public Main_SetHBlankIntrCB
 .public AllocFromHeap
-.public FreeToHeap
+.public Heap_Free
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
 .public InitBgFromTemplate

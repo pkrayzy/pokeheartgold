@@ -112,7 +112,7 @@ _021E5916:
 	mov r1, #0
 	mov r0, #0x34
 	add r2, r1, #0
-	bl sub_02004EC4
+	bl Sound_SetSceneAndPlayBGM
 	ldr r2, _021E5A7C ; =0x04000304
 	ldr r0, _021E5A80 ; =0xFFFF7FFF
 	ldrh r1, [r2]
@@ -412,7 +412,7 @@ _021E5C8E:
 	add r0, r6, #0
 	bl ov37_021E5F20
 	ldr r0, [r6, #8]
-	bl FreeToHeap
+	bl Heap_Free
 	add r0, r4, #0
 	bl OverlayManager_FreeData
 	mov r0, #0
@@ -716,7 +716,7 @@ ov37_021E5F20: ; 0x021E5F20
 	add r6, r0, #0
 	ldr r0, _021E5F54 ; =0x000043C8
 	ldr r0, [r6, r0]
-	bl FreeToHeap
+	bl Heap_Free
 	ldr r0, _021E5F58 ; =0x000093F0
 	ldr r0, [r6, r0]
 	bl YesNoPrompt_Destroy
@@ -761,7 +761,7 @@ ov37_021E5F5C: ; 0x021E5F5C
 	mov r1, #0
 	bl FreeBgTilemapBuffer
 	add r0, r4, #0
-	bl FreeToHeap
+	bl Heap_Free
 	pop {r4, pc}
 	.balign 4, 0
 	thumb_func_end ov37_021E5F5C

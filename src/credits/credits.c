@@ -153,7 +153,7 @@ typedef struct {
 } CutsceneWork;
 
 typedef struct {
-    OVY_MANAGER *man;
+    OverlayManager *man;
     BgConfig *bgConfig;
     u32 timer;
     int musicBoxWaitTimer;
@@ -209,7 +209,7 @@ static void LoadCutsceneSpriteGfx(CutsceneWork *a0, int a1);
 static void InitCutsceneSprites(CreditsAppWork *work);
 static void FreeCutsceneSprites(CreditsAppWork *work);
 
-BOOL Credits_Init(OVY_MANAGER *man, int *state) {
+BOOL Credits_Init(OverlayManager *man, int *state) {
     CreditsAppWork *work;
 
     switch (*state) {
@@ -255,7 +255,7 @@ BOOL Credits_Init(OVY_MANAGER *man, int *state) {
 
         // Initialize to first line of the credits
         work->pageWork.pageState.line = 1;
-        sub_02004EC4(0xe, 0x3f8, 1);
+        Sound_SetSceneAndPlayBGM(0xe, 0x3f8, 1);
         Main_SetVBlankIntrCB((GFIntrCB)VBlankCB, work);
         *state += 1;
         break;
@@ -267,7 +267,7 @@ BOOL Credits_Init(OVY_MANAGER *man, int *state) {
     return FALSE;
 }
 
-BOOL Credits_Exit(OVY_MANAGER *man, int *state) {
+BOOL Credits_Exit(OverlayManager *man, int *state) {
     CreditsAppWork *work = OverlayManager_GetData(man);
 
     switch (*state) {
@@ -282,8 +282,8 @@ BOOL Credits_Exit(OVY_MANAGER *man, int *state) {
         String_Delete(ptr->string);
         FreeBG(work);
         for (u8 i = 0; i < 6; i++) {
-            FreeToHeap(work->unk468[i]);
-            FreeToHeap(work->unk480[i]);
+            Heap_Free(work->unk468[i]);
+            Heap_Free(work->unk480[i]);
         }
         FreePageSysTasks(work);
         *state += 1;
@@ -303,7 +303,7 @@ BOOL Credits_Exit(OVY_MANAGER *man, int *state) {
     return FALSE;
 }
 
-BOOL Credits_Main(OVY_MANAGER *man, int *state) {
+BOOL Credits_Main(OverlayManager *man, int *state) {
     CreditsAppWork *work = OverlayManager_GetData(man);
     GF_ASSERT(work->timer < 0xffffffff);
 
@@ -436,7 +436,7 @@ static void FreeBG(CreditsAppWork *work) {
     FreeBgTilemapBuffer(work->bgConfig, GF_BG_LYR_SUB_1);
     FreeBgTilemapBuffer(work->bgConfig, GF_BG_LYR_SUB_2);
     FreeBgTilemapBuffer(work->bgConfig, GF_BG_LYR_SUB_3);
-    FreeToHeap(work->bgConfig);
+    Heap_Free(work->bgConfig);
 }
 
 static void LoadBgGraphics(CreditsAppWork *work) {
@@ -987,8 +987,8 @@ static void LoadCutsceneSpriteGfx(CutsceneWork *a0, int spriteId) {
 
     a0->spriteGfx[a0->curSprite].unk2C = GfGfxLoader_GetCellBankFromOpenNarc(a0->narc, sCutsceneSpriteGfxFileIds[spriteId].cellBankFileId, TRUE, &a0->spriteGfx[a0->curSprite].cellDataBank, HEAP_ID_CREDITS);
     a0->spriteGfx[a0->curSprite].unk30 = GfGfxLoader_GetAnimBankFromOpenNarc(a0->narc, sCutsceneSpriteGfxFileIds[spriteId].animBankFileId, TRUE, &a0->spriteGfx[a0->curSprite].animDataBank, HEAP_ID_CREDITS);
-    FreeToHeap(charData);
-    FreeToHeap(plttData);
+    Heap_Free(charData);
+    Heap_Free(plttData);
     a0->curSprite++;
 }
 
@@ -1061,8 +1061,8 @@ static void FreeCutsceneSprites(CreditsAppWork *work) {
 
     sprites->count = 0;
     for (i = 0; i < cutsceneWork->curSprite; i++) {
-        FreeToHeap(cutsceneWork->spriteGfx[i].unk2C);
-        FreeToHeap(cutsceneWork->spriteGfx[i].unk30);
+        Heap_Free(cutsceneWork->spriteGfx[i].unk2C);
+        Heap_Free(cutsceneWork->spriteGfx[i].unk30);
         cutsceneWork->spriteGfx[i].cellDataBank = NULL;
         cutsceneWork->spriteGfx[i].animDataBank = NULL;
     }

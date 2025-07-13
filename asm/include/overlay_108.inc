@@ -4,7 +4,7 @@
 .public FontID_Release
 .public FontID_String_GetWidth
 .public LoadFontPal1
-.public sub_02004EC4
+.public Sound_SetSceneAndPlayBGM
 .public PlaySE
 .public OverlayManager_CreateAndGetData
 .public OverlayManager_GetData
@@ -110,7 +110,7 @@
 .public CreateHeap
 .public DestroyHeap
 .public AllocFromHeap
-.public FreeToHeap
+.public Heap_Free
 .public GF_ExpHeap_FndInitAllocator
 .public BgConfig_Alloc
 .public SetBothScreensModesAndDisable
@@ -190,7 +190,7 @@
 .public Save_SafariZone_Get
 .public SafariZone_CopyAreaSet
 .public SafariZone_SetAreaSet
-.public sub_0202F720
+.public SafariZone_GetObjectUnlockLevel
 .public SafariZone_SwapAreasInSet
 .public SafariZone_InitAreaInSet
 .public SafariZone_AddObjectToArea

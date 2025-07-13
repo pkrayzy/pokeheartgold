@@ -24,7 +24,7 @@ void BattleFinger_FreeResources(SpriteManager *gfxHandler, u32 character, u32 pa
     SpriteManager_UnloadAnimObjById(gfxHandler, animation);
 }
 
-static const UnkTemplate_0200D748 ov12_0226EBD4 = {
+static const ManagedSpriteTemplate ov12_0226EBD4 = {
     .x = 0,
     .y = 0,
     .z = 0,
@@ -39,7 +39,7 @@ static const UnkTemplate_0200D748 ov12_0226EBD4 = {
 
 BattleFinger *BattleFinger_New(SpriteSystem *renderer, SpriteManager *gfxHandler, HeapID heapId, u32 character, u32 pal, u32 cell, u32 animation, u32 spritePriority, u32 bgPriority) {
     BattleFinger *finger;
-    UnkTemplate_0200D748 unkStruct = ov12_0226EBD4;
+    ManagedSpriteTemplate unkStruct = ov12_0226EBD4;
 
     unkStruct.resIdList[0] = character;
     unkStruct.resIdList[1] = pal;
@@ -64,7 +64,7 @@ BattleFinger *BattleFinger_New(SpriteSystem *renderer, SpriteManager *gfxHandler
 void BattleFinger_Delete(BattleFinger *finger) {
     Sprite_DeleteAndFreeResources(finger->unk0);
     SysTask_Destroy(finger->task);
-    FreeToHeap(finger);
+    Heap_Free(finger);
 }
 
 void ov12_0226BCFC(BattleFinger *finger, int x, int y, fx32 a3) {

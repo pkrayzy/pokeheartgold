@@ -543,7 +543,7 @@ static const int sBgPicNCGR_NCLR[10][2] = {
      },
 };
 
-BOOL OakSpeech_Init(OVY_MANAGER *ovyMan, int *pState) {
+BOOL OakSpeech_Init(OverlayManager *ovyMan, int *pState) {
     CreateHeap(HEAP_ID_3, HEAP_ID_OAKS_SPEECH, 0x40000);
     OakSpeechData *data = OverlayManager_CreateAndGetData(ovyMan, sizeof(OakSpeechData), HEAP_ID_OAKS_SPEECH);
     memset(data, 0, sizeof(OakSpeechData));
@@ -563,7 +563,7 @@ BOOL OakSpeech_Init(OVY_MANAGER *ovyMan, int *pState) {
     return TRUE;
 }
 
-BOOL OakSpeech_Main(OVY_MANAGER *ovyMan, int *pState) {
+BOOL OakSpeech_Main(OverlayManager *ovyMan, int *pState) {
     OakSpeechData *data = OverlayManager_GetData(ovyMan);
     BOOL ret = FALSE;
     switch (*pState) {
@@ -636,7 +636,7 @@ BOOL OakSpeech_Main(OVY_MANAGER *ovyMan, int *pState) {
     return ret;
 }
 
-BOOL OakSpeech_Exit(OVY_MANAGER *ovyMan, int *pState) {
+BOOL OakSpeech_Exit(OverlayManager *ovyMan, int *pState) {
     OakSpeechData *data = OverlayManager_GetData(ovyMan);
     HeapID heapId = data->heapId;
     FontID_Release(4);
@@ -766,7 +766,7 @@ static void OakSpeech_CleanupBgs(OakSpeechData *data) {
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_SUB_1);
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_SUB_2);
     FreeBgTilemapBuffer(data->bgConfig, GF_BG_LYR_SUB_3);
-    FreeToHeap(data->bgConfig);
+    Heap_Free(data->bgConfig);
 }
 
 static void OakSpeech_InitMsgPrinter(OakSpeechData *data) {
@@ -1174,7 +1174,7 @@ static void OakSpeech_LoadButtonTutorialGfx(OakSpeechData *data) {
 
     plttData_raw = GfGfxLoader_GetPlttData(NARC_demo_intro_intro, plttId_Sub, &plttData, data->heapId);
     data->genderSelectFrameDefaultPalette = ((const u16 *)plttData->pRawData)[12];
-    FreeToHeap(plttData_raw);
+    Heap_Free(plttData_raw);
 
     OakSpeech_SetButtonTutorialScreenLayout(data, 1);
     OakSpeech_DrawPicOnBgLayer(data, OAK_SPEECH_PIC_NONE, OAK_SPEECH_PIC_NONE); // effectively a nop
@@ -1529,7 +1529,7 @@ static BOOL OakSpeech_DoMainTask(OakSpeechData *data) {
     switch (data->state) {
     case OAK_SPEECH_MAIN_STATE_START_TUTORIAL_MUSIC:
         ToggleBgLayer(GF_BG_LYR_SUB_2, GF_PLANE_TOGGLE_OFF);
-        sub_02004EC4(2, SEQ_GS_POKEMON_THEME, 1);
+        Sound_SetSceneAndPlayBGM(2, SEQ_GS_POKEMON_THEME, 1);
         StopBGM(SEQ_GS_POKEMON_THEME, 0);
         PlayBGM(SEQ_GS_STARTING);
         data->state = OAK_SPEECH_MAIN_STATE_FADE_IN_TUTORIAL_MENU;
