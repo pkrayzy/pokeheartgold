@@ -3,12 +3,12 @@
 #include "global.h"
 
 #include "pokeathlon/pokeathlon.h"
+#include "pokeathlon/pokeathlon_save.h"
 
 #include "assert.h"
 #include "heap.h"
 #include "player_data.h"
 #include "render_text.h"
-#include "unk_02031904.h"
 #include "unk_02034354.h"
 #include "unk_02035900.h"
 
@@ -192,7 +192,7 @@ BOOL PokeathlonCourse_Main(OverlayManager *manager, int *state) {
 BOOL PokeathlonCourse_Exit(OverlayManager *manager, int *state) {
     PokeathlonCourseData *data;
     PokeathlonCourseArgs *args;
-    POKEATHLON_SAV *pokeathlonSave;
+    PokeathlonSave *pokeathlonSave;
     Pokeathlon_UnkSubStruct_B00 *result;
     SaveData *saveData;
 
@@ -212,7 +212,7 @@ BOOL PokeathlonCourse_Exit(OverlayManager *manager, int *state) {
     // Get Pokeathlon save data and process result
     saveData = *(SaveData **)data->args;
     pokeathlonSave = Save_Pokeathlon_Get(saveData);
-    result = sub_020319F0(pokeathlonSave);
+    result = PokeathlonSave_GetAgainUnkB00(pokeathlonSave);
     ov96_021E7F98(data->frameCounter, 59999, result);
 
     // Reset text flags
@@ -384,13 +384,13 @@ u32 PokeathlonCourse_GetField3D8_AtIndex(PokeathlonCourseData *data, u8 index) {
 u32 ov96_021E5E7C(PokeathlonCourseData *data) {
     u8 i, j, numParticipants;
     BOOL flag = (PokeathlonCourse_GetMode(data) == 1);
-    u32* fieldPtr = data->field_3D8;
+    u32 *fieldPtr = data->field_3D8;
     numParticipants = flag ? 4 : 3;
 
     for (i = 0; i < 10; i++) {
         BOOL match = TRUE;
         for (j = 0; j < numParticipants; j++) {
-            if (fieldPtr[j] != ov96_0221A934[i*4+j]) {
+            if (fieldPtr[j] != ov96_0221A934[i * 4 + j]) {
                 match = FALSE;
                 break;
             }
